@@ -49,7 +49,10 @@ def toLua(data, allowFloats, rootName=""):
                 "List serialization failed. Current progress: " + out +
                 ". Input: " + repr(data)) from e
     elif type(data) in [int, datatypes.hexint]:
-        out += str(data)
+        if allowFloats:
+            out += str(data)
+        else:
+            out += toFxP(data)
     elif type(data) is float:
         if allowFloats:
             out += str(data)
