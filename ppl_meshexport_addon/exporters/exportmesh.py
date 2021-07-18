@@ -18,7 +18,7 @@ def serializeMesh(object, use_local, export_color):
         mesh.transform(object.matrix_world)
     bm = bmesh.new()
     bm.from_mesh(mesh)
-    if export_color:
+    if export_color and bm.loops.layers.color.active:
         out[stringKey("colors")] = {}
     for vertex in bm.verts:
         out[stringKey("vertexes")].append(
@@ -44,28 +44,29 @@ def serializeMesh(object, use_local, export_color):
         out[stringKey("segments")].append(
             [edge.vertices[0], edge.vertices[1]])
     # Color compressor
-    for color in out[stringKey("colors")]:
-        colorIndices = deepcopy(out[stringKey("colors")][color])
-        colorIndices.sort()
-        out[stringKey("colors")][color] = []
-        partialRange = False
-        for index, color_index in enumerate(colorIndices):
-            if index + 1 < len(colorIndices):
-                if colorIndices[index + 1] == colorIndices[index] + 1:
-                    if partialRange:
-                        out[stringKey("colors")][color][-1][1] = colorIndices[
-                            index + 1]
+    if export_color and bm.loops.layers.color.active:
+        for color in out[stringKey("colors")]:
+            colorIndices = deepcopy(out[stringKey("colors")][color])
+            colorIndices.sort()
+            out[stringKey("colors")][color] = []
+            partialRange = False
+            for index, color_index in enumerate(colorIndices):
+                if index + 1 < len(colorIndices):
+                    if colorIndices[index + 1] == colorIndices[index] + 1:
+                        if partialRange:
+                            out[stringKey("colors")][color][-1][1] = colorIndices[
+                                index + 1]
+                        else:
+                            out[stringKey("colors")][color].append(
+                                [colorIndices[index], colorIndices[index + 1]])
+                            partialRange = True
                     else:
-                        out[stringKey("colors")][color].append(
-                            [colorIndices[index], colorIndices[index + 1]])
-                        partialRange = True
+                        partialRange = False
+                        out[stringKey("colors")][color].append(colorIndices[index])
+                elif partialRange == True:
+                    pass
                 else:
-                    partialRange = False
                     out[stringKey("colors")][color].append(colorIndices[index])
-            elif partialRange == True:
-                pass
-            else:
-                out[stringKey("colors")][color].append(colorIndices[index])
     bm.free()
     return out
 
@@ -128,59 +129,3 @@ def register():
 
 def unregister():
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
-
-
-#Old edge merger
-"""# Graph computation, group deduplication, and single-edge serialization
-        duplicates = {}
-        fullgraph = {}
-        deduplicationQueue = {}
-        for edge in mesh.edges:
-            duplicates[edge] = []
-            for group in mesh.vertices[edge.vertices[0]].groups.values():
-                if group.group in [
-                        group2.group
-                        for group2 in mesh.vertices[edge.vertices[1]].groups
-                ]:
-                    duplicates[edge].append(group.group)
-            if len(duplicates[edge]) == 0:
-                out[stringKey("segments")].append(
-                    [edge.vertices[0], edge.vertices[1]])
-            else:
-                for group in duplicates[edge]:
-                    if len(duplicates[edge]) > 1:
-                        if not group in deduplicationQueue:
-                            deduplicationQueue[group] = [edge]
-                        else:
-                            deduplicationQueue[group].append(edge)
-                    if group not in fullgraph.keys():
-                        fullgraph[group] = {}
-                    for i in [0, 1]:
-                        if edge.vertices[i] in fullgraph[group].keys():
-                            fullgraph[group][edge.vertices[i]].append(
-                                edge.vertices[1 - i])
-                        else:
-                            fullgraph[group][edge.vertices[i]] = [
-                                edge.vertices[1 - i]
-                            ]
-        deduplicationQueue2 = {
-            key: value
-            for key, value in duplicates if len(value) > 1
-        }
-        for key in deduplicationQueue2:
-            isBridgedGroup = {"bridged": [], "unbridged": []}
-            for group in deduplicationQueue2[key]:
-                if key in pygraphutils.findBridges(fullgraph[group]):
-                    isBridgedGroup["bridged"].append(group)
-                else:
-                    isBridgedGroup["unbridged"].append(group)
-            if len(isBridgedGroup["bridged"]) == 1:
-                for group in isBridgedGroup["unbridged"]:
-                    pygraphutils.removeEdge(key.vertices[0], key.vertices[1],
-                                            fullgraph[group])
-
-        for graph in fullgraph.values():
-            path = pygraphutils.fleury(graph)
-            assert type(path) != type(
-                None), "Path not Eulerian. Serialization failed."
-            out[stringKey("segments")].append(path)"""
