@@ -6,10 +6,9 @@ from copy import deepcopy
 from ..utils.common import cleanRound, clamp
 from ..lua.luadataexport import toLua, stringKey
 from ..utils.datatypes import hexint
-from ..modules import pygraphutils
 
 
-def serializeMesh(object, merge_edges, use_local, export_color):
+def serializeMesh(object, use_local, export_color):
     # Vertex Processing and init
     out = {}
     out[stringKey("vertexes")] = []
@@ -41,13 +40,9 @@ def serializeMesh(object, merge_edges, use_local, export_color):
                 out[stringKey("colors")][colorhex].append(vertex.index + 1)
             else:
                 out[stringKey("colors")][colorhex] = [vertex.index + 1]
-    if merge_edges:
-        pass
-    else:
-        # If merge_edges is disabled, use a simpler segment serializer
-        for edge in mesh.edges:
-            out[stringKey("segments")].append(
-                [edge.vertices[0], edge.vertices[1]])
+    for edge in mesh.edges:
+        out[stringKey("segments")].append(
+            [edge.vertices[0], edge.vertices[1]])
     # Color compressor
     for color in out[stringKey("colors")]:
         colorIndices = deepcopy(out[stringKey("colors")][color])
@@ -88,13 +83,6 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         maxlen=511,
     )
 
-    merge_edges: BoolProperty(
-        name="Merge Edges With Vertex Groups",
-        description=
-        "Merge edges contained in vertex groups into larger segments",
-        default=True,
-    )
-
     only_selected: BoolProperty(
         name="Only Export Selected Objects",
         description="Only export selected objects",
@@ -121,7 +109,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                 (not self.only_selected) or
                 (self.only_selected and object.select_get())):
                 out.append(
-                    serializeMesh(object, False, self.use_local,
+                    serializeMesh(object, self.use_local,
                                   self.export_color))
         serialized = toLua(out, True, "meshes")
         f = open(self.filepath, 'w', encoding='utf-8')

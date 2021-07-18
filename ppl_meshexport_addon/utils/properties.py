@@ -16,13 +16,7 @@ class PewPewTemporaryProperties(bpy.types.PropertyGroup):
         size=4,
         update=updateVertexColors,
         default=(1.0, 1.0, 1.0, 1.0))
-
-class PewPewSegmentProperties(bpy.types.PropertyGroup):
-    name: bpy.props.StringProperty(name="Segment Name")
-
-class PewPewMeshEdgeProperties(bpy.types.PropertyGroup):
-    segment: bpy.props.IntProperty(name="Segment")
-
+        
 class PewPewMeshExporterPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__.partition(".")[0]
 
@@ -37,8 +31,6 @@ class PewPewMeshExporterPreferences(bpy.types.AddonPreferences):
 def register():
     bpy.types.WindowManager.pewpew_temporaryproperties = bpy.props.PointerProperty(
         type=PewPewTemporaryProperties)
-    bpy.types.MeshEdge.pewpew = bpy.props.PointerProperty(
-        type=PewPewMeshEdgeProperties)
 
 def unregister():
     del bpy.types.WindowManager.pewpew_temporaryproperties

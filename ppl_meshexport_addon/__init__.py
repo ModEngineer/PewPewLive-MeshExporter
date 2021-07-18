@@ -25,11 +25,6 @@ from .utils import properties
 classes = [
     properties.PewPewMeshExporterPreferences,
     properties.PewPewTemporaryProperties,
-    properties.PewPewSegmentProperties,
-    properties.PewPewEdgeIdVGroupIndices,
-    properties.PewPewFilteredVGroups,
-    properties.PewPewObjectProperties,
-    properties.PewPewMeshEdgeProperties,
     (properties.register, properties.unregister),
     vertexcolorimprovement.DATA_PT_vertex_color_improvement,
     vertexcolorimprovement.VertexColorOperator,
