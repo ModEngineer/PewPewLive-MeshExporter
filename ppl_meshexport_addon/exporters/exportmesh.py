@@ -1,6 +1,6 @@
 import bpy
 import bpy_extras
-from bpy.props import BoolProperty
+from bpy.props import BoolProperty, IntProperty, FloatProperty
 import bmesh
 from copy import deepcopy
 from ..utils.common import cleanRound, clamp
@@ -8,7 +8,7 @@ from ..lua.luadataexport import toLua, stringKey
 from ..utils.datatypes import hexint
 
 
-def serializeMesh(object, use_local, export_color):
+def serializeMesh(object, use_local, export_color, max_decimal_digits, multiplier):
     # Vertex Processing and init
     out = {}
     out[stringKey("vertexes")] = []
@@ -22,11 +22,10 @@ def serializeMesh(object, use_local, export_color):
         out[stringKey("colors")] = {}
     for vertex in bm.verts:
         out[stringKey("vertexes")].append(
-            [cleanRound(vertex.co[0],
-                        4), cleanRound(vertex.co[1],
-                                       4)])
-        z = cleanRound(vertex.co[2], 4)
-        if z!=0:
+            [cleanRound(vertex.co[0]*multiplier, max_decimal_digits),
+             cleanRound(vertex.co[1]*multiplier, max_decimal_digits)])
+        z = cleanRound(vertex.co[2]*multiplier, max_decimal_digits)
+        if z != 0:
             out[stringKey("vertexes")][-1].append(z)
         if export_color and bm.loops.layers.color.active:
             #Face vertices are ignored. I don't have the time to support multiple colors per vertex.
@@ -41,8 +40,7 @@ def serializeMesh(object, use_local, export_color):
             else:
                 out[stringKey("colors")][colorhex] = [vertex.index + 1]
     for edge in mesh.edges:
-        out[stringKey("segments")].append(
-            [edge.vertices[0], edge.vertices[1]])
+        out[stringKey("segments")].append([edge.vertices[0], edge.vertices[1]])
     # Color compressor
     if export_color and bm.loops.layers.color.active:
         for color in out[stringKey("colors")]:
@@ -54,15 +52,17 @@ def serializeMesh(object, use_local, export_color):
                 if index + 1 < len(colorIndices):
                     if colorIndices[index + 1] == colorIndices[index] + 1:
                         if partialRange:
-                            out[stringKey("colors")][color][-1][1] = colorIndices[
-                                index + 1]
+                            out[stringKey(
+                                "colors")][color][-1][1] = colorIndices[index +
+                                                                        1]
                         else:
                             out[stringKey("colors")][color].append(
                                 [colorIndices[index], colorIndices[index + 1]])
                             partialRange = True
                     else:
                         partialRange = False
-                        out[stringKey("colors")][color].append(colorIndices[index])
+                        out[stringKey("colors")][color].append(
+                            colorIndices[index])
                 elif partialRange == True:
                     pass
                 else:
@@ -82,6 +82,23 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         default="*.lua",
         options={"HIDDEN"},
         maxlen=511,
+    )
+
+    max_decimal_digits: IntProperty(
+        name="Maximum Decimal Digits",
+        description="Maximum amount of decimal digits in exported coordinates",
+        default=3,
+        hard_min=0,
+        soft_min=1,
+    )
+
+    multiplier: FloatProperty(
+        name="Coordinate Scale Multiplier",
+        description=
+        "All coordinates are multiplied by this number. Set this to 32 for 1 unit to equal the width of the Alpha ship model in-game.",
+        default=1.0,
+        hard_min=0.0,
+        soft_min=0.1,
     )
 
     only_selected: BoolProperty(
@@ -110,8 +127,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                 (not self.only_selected) or
                 (self.only_selected and object.select_get())):
                 out.append(
-                    serializeMesh(object, self.use_local,
-                                  self.export_color))
+                    serializeMesh(object, self.use_local, self.export_color, self.max_decimal_digits, self.multiplier))
         serialized = toLua(out, True, "meshes")
         f = open(self.filepath, 'w', encoding='utf-8')
         f.write(serialized)
