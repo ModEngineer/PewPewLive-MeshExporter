@@ -16,7 +16,8 @@ class PewPewTemporaryProperties(bpy.types.PropertyGroup):
         size=4,
         update=updateVertexColors,
         default=(1.0, 1.0, 1.0, 1.0))
-        
+
+
 class PewPewMeshExporterPreferences(bpy.types.AddonPreferences):
     bl_idname = __package__.partition(".")[0]
 
@@ -31,6 +32,7 @@ class PewPewMeshExporterPreferences(bpy.types.AddonPreferences):
 def register():
     bpy.types.WindowManager.pewpew_temporaryproperties = bpy.props.PointerProperty(
         type=PewPewTemporaryProperties)
+
 
 def unregister():
     del bpy.types.WindowManager.pewpew_temporaryproperties

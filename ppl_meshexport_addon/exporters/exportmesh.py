@@ -146,7 +146,8 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
 
     color_decompressor_location: StringProperty(
         name="Color Decompressor Location",
-        description="The location of decompresscolors.lua, including \"/dynamic/\" (without quotes)",
+        description=
+        "The location of decompresscolors.lua, including \"/dynamic/\" (without quotes)",
         default="/dynamic/utils/decompresscolors.lua",
     )
 
@@ -162,7 +163,8 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                                   self.max_decimal_digits, self.multiplier))
 
         if self.export_color:
-            serialized = "meshes=require(\"" + self.color_decompressor_location + "\")(" + toLua(out, True) + ")"
+            serialized = "meshes=require(\"" + self.color_decompressor_location + "\")(" + toLua(
+                out, True) + ")"
         else:
             serialized = toLua(out, True, "meshes")
         f = open(self.filepath, 'w', encoding='utf-8')

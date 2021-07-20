@@ -6,7 +6,7 @@ def updateVertexColors(self, context):
     if context.preferences.addons[__package__.partition(
             ".")[0]].preferences.editmode_vertex_color_auto_update:
         bpy.ops.mesh.set_vertex_colors()
-    return 
+    return
 
 
 class VertexColorOperator(bpy.types.Operator):
