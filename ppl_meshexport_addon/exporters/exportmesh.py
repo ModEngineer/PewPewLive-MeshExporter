@@ -55,11 +55,12 @@ def serializeMesh(object, use_local, export_color, exclude_seamed_edges,
             out[stringKey("colors")][colorhex].get(colorhex, []) + [
                 correctIndex(excludedVertexIndices, vertex.index)
             ]
-    for edge in mesh.edges:
-        out[stringKey("segments")].append([
-            correctIndex(excludedVertexIndices, edge.vertices[0]),
-            correctIndex(excludedVertexIndices, edge.vertices[1])
-        ])
+    for edge in bm.edges:
+        if not (exclude_seamed_edges and edge.seam):
+            out[stringKey("segments")].append([
+                correctIndex(excludedVertexIndices, edge.verts[0]),
+                correctIndex(excludedVertexIndices, edge.verts[1])
+            ])
     # The following code is the color compressor. I have no clue how it works, but it works.
     if export_color and bm.loops.layers.color.active:
         for color in out[stringKey("colors")]:
