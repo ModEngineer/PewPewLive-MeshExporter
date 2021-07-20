@@ -6,9 +6,13 @@ from copy import deepcopy
 from ..utils.common import cleanRound, clamp
 from ..lua.luadataexport import toLua, stringKey
 from ..utils.datatypes import hexint
+import itertools
 
+def correctIndex(exclusions, index):
+    assert index not in exclusions, "Index to be corrected is in the exclusion list"
+    return index - sum(1 for excludedIndex in exclusions if excludedIndex<index)
 
-def serializeMesh(object, use_local, export_color, max_decimal_digits, multiplier):
+def serializeMesh(object, use_local, export_color, exclude_seamed_edges, max_decimal_digits, multiplier):
     # Vertex Processing and init
     out = {}
     out[stringKey("vertexes")] = []
@@ -20,7 +24,9 @@ def serializeMesh(object, use_local, export_color, max_decimal_digits, multiplie
     bm.from_mesh(mesh)
     if export_color and bm.loops.layers.color.active:
         out[stringKey("colors")] = {}
-    for vertex in bm.verts:
+    includedVertices = list(itertools.chain.from_iterable([list(edge.verts) for edge in bm.edges if not (exclude_seamed_edges and edge.seam)]))
+    excludedVertexIndices = [ vertex.index for vertex in bm.verts if vertex not in includedVertices ]
+    for vertex in includedVertices:
         out[stringKey("vertexes")].append(
             [cleanRound(vertex.co[0]*multiplier, max_decimal_digits),
              cleanRound(vertex.co[1]*multiplier, max_decimal_digits)])
@@ -35,13 +41,10 @@ def serializeMesh(object, use_local, export_color, max_decimal_digits, multiplie
                 (clamp(round(vertexcolor[1] * 255), 0, 255) << 16) +
                 (clamp(round(vertexcolor[2] * 255), 0, 255) << 8) +
                 clamp(round(vertexcolor[3] * 255), 0, 255))
-            if colorhex in out[stringKey("colors")].keys():
-                out[stringKey("colors")][colorhex].append(vertex.index + 1)
-            else:
-                out[stringKey("colors")][colorhex] = [vertex.index + 1]
+            out[stringKey("colors")][colorhex].get(colorhex, []) + [correctIndex(excludedVertexIndices, vertex.index)]
     for edge in mesh.edges:
-        out[stringKey("segments")].append([edge.vertices[0], edge.vertices[1]])
-    # Color compressor
+        out[stringKey("segments")].append([correctIndex(excludedVertexIndices, edge.vertices[0]), correctIndex(excludedVertexIndices, edge.vertices[1])])
+    # The following code is the color compressor. I have no clue how it works, but it works.
     if export_color and bm.loops.layers.color.active:
         for color in out[stringKey("colors")]:
             colorIndices = deepcopy(out[stringKey("colors")][color])
@@ -50,23 +53,23 @@ def serializeMesh(object, use_local, export_color, max_decimal_digits, multiplie
             partialRange = False
             for index, color_index in enumerate(colorIndices):
                 if index + 1 < len(colorIndices):
-                    if colorIndices[index + 1] == colorIndices[index] + 1:
+                    if colorIndices[index + 1] == color_index + 1:
                         if partialRange:
                             out[stringKey(
                                 "colors")][color][-1][1] = colorIndices[index +
                                                                         1]
                         else:
                             out[stringKey("colors")][color].append(
-                                [colorIndices[index], colorIndices[index + 1]])
+                                [color_index, colorIndices[index + 1]])
                             partialRange = True
                     else:
                         partialRange = False
                         out[stringKey("colors")][color].append(
-                            colorIndices[index])
+                            color_index)
                 elif partialRange == True:
                     pass
                 else:
-                    out[stringKey("colors")][color].append(colorIndices[index])
+                    out[stringKey("colors")][color].append(color_index)
     bm.free()
     return out
 
@@ -120,6 +123,12 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         default=False,
     )
 
+    exclude_seamed_edges: BoolProperty(
+        name="Exclude Seams",
+        description="Stop edges marked as seams from being exported",
+        default=False,
+    )
+
     def execute(self, context):
         out = []
         for object in context.scene.objects:
@@ -127,7 +136,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                 (not self.only_selected) or
                 (self.only_selected and object.select_get())):
                 out.append(
-                    serializeMesh(object, self.use_local, self.export_color, self.max_decimal_digits, self.multiplier))
+                    serializeMesh(object, self.use_local, self.export_color, self.exclude_seamed_edges, self.max_decimal_digits, self.multiplier))
         serialized = toLua(out, True, "meshes")
         f = open(self.filepath, 'w', encoding='utf-8')
         f.write(serialized)
