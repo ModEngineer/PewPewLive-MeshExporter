@@ -14,9 +14,7 @@ bl_info = {
 #All used libraries should be local
 
 #Import modules
-import bpy
-
-from types import FunctionType
+import bpy, importlib
 
 from .exporters import exportmesh
 from .newgui import vertexcolorimprovement
@@ -56,6 +54,9 @@ def unregister(stop=-1):
 
 
 def register():
+    importlib.reload(exportmesh)
+    importlib.reload(vertexcolorimprovement)
+    importlib.reload(properties)
     try:
         for index, registrationItem in enumerate(classes):
             if type(registrationItem) == tuple:
