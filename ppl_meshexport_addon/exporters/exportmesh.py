@@ -1,6 +1,6 @@
 import bpy
 import bpy_extras
-from bpy.props import BoolProperty, IntProperty, FloatProperty
+from bpy.props import BoolProperty, IntProperty, FloatProperty, StringProperty
 import bmesh
 from copy import deepcopy
 from ..utils.common import cleanRound, clamp
