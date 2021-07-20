@@ -3,7 +3,7 @@ bl_info = {
     "author": "ModEngineer",
     "blender": (2, 90, 0),
     "description": "A mesh exporter for PewPew Live",
-    "version": (0, 1, 5),
+    "version": (0, 1, 6),
     "tracker_url":
     "https://www.github.com/ModEngineer/PewPewLive-MeshExporter/issues",
     "category": "Import-Export"
@@ -16,28 +16,15 @@ bl_info = {
 #Import modules
 import bpy, importlib
 
-from .exporters import exportmesh
-from .newgui import vertexcolorimprovement
-from .utils import properties
-
-classes = [
-    properties.PewPewMeshExporterPreferences,
-    properties.PewPewTemporaryProperties,
-    (properties.register, properties.unregister),
-    vertexcolorimprovement.DATA_PT_vertex_color_improvement,
-    vertexcolorimprovement.VertexColorOperator,
-    exportmesh.ExportPPLMesh,
-    (exportmesh.register, exportmesh.unregister),
-]
-
+from . import importlist
 
 def unregister(stop=-1):
     if stop == -1:
-        stop = len(classes)
+        stop = len(importlist.importorder)
     else:
         stop += 1
     try:
-        for registrationItem in reversed(classes[:stop]):
+        for registrationItem in reversed(importlist.importorder[:stop]):
             if type(registrationItem) == tuple:
                 registrationItem[1]()
             else:
@@ -54,11 +41,9 @@ def unregister(stop=-1):
 
 
 def register():
-    importlib.reload(exportmesh)
-    importlib.reload(vertexcolorimprovement)
-    importlib.reload(properties)
+    importlib.reload(importlist)
     try:
-        for index, registrationItem in enumerate(classes):
+        for index, registrationItem in enumerate(importlist.importorder):
             if type(registrationItem) == tuple:
                 registrationItem[0]()
             else:
