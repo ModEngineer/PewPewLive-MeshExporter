@@ -10,7 +10,7 @@ A [Blender](https://www.blender.org/) 2.9x plugin for converting scenes into [Pe
 6. Tick the checkbox next to "Import-Export: PewPew Live Mesh Exporter"
 
 ### What is `decompresscolors.lua`?
-`decompresscolors.lua` is, as the name states, a color decompression script. This add-on losslessly compresses the colors it exports to save space on larger models. The script can be found [here](https://github.com/ModEngineer/PewPewLive-Code-Snippets/blob/main/mesh_utils/decompresscolors.lua)
+This add-on losslessly compresses colors it exports, which need to be decompressed. `decompresscolors.lua` is the script used to decompress the exported colors and must be included with your PewPew Live level. It can be found [here](https://github.com/ModEngineer/PewPewLive-Code-Snippets/blob/main/mesh_utils/decompresscolors.lua).
 
 ### Found a bug?
 Open an [issue](https://github.com/ModEngineer/PewPewLive-MeshExporter/issues)
