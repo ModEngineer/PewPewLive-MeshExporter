@@ -28,11 +28,13 @@ def serializeMesh(object, use_local, export_color, exclude_seamed_edges,
     bm.from_mesh(mesh)
     if export_color and bm.loops.layers.color.active:
         out[stringKey("colors")] = {}
-    includedVertices = list(
-        itertools.chain.from_iterable([
-            list(edge.verts) for edge in bm.edges
-            if not (exclude_seamed_edges and edge.seam)
-        ]))
+    includedVertices = sorted(list(
+        set(
+            itertools.chain.from_iterable([
+                list(edge.verts) for edge in bm.edges
+                if not (exclude_seamed_edges and edge.seam)
+            ]))),
+                              key=lambda v: v.index)
     excludedVertexIndices = [
         vertex.index for vertex in bm.verts if vertex not in includedVertices
     ]
@@ -52,14 +54,15 @@ def serializeMesh(object, use_local, export_color, exclude_seamed_edges,
                 (clamp(round(vertexcolor[1] * 255), 0, 255) << 16) +
                 (clamp(round(vertexcolor[2] * 255), 0, 255) << 8) +
                 clamp(round(vertexcolor[3] * 255), 0, 255))
-            out[stringKey("colors")][colorhex].get(colorhex, []) + [
-                correctIndex(excludedVertexIndices, vertex.index)
-            ]
+            out[stringKey("colors")][
+                str(colorhex)] = out[stringKey("colors")].get(
+                    str(colorhex),
+                    []) + [correctIndex(excludedVertexIndices, vertex.index)]
     for edge in bm.edges:
         if not (exclude_seamed_edges and edge.seam):
             out[stringKey("segments")].append([
-                correctIndex(excludedVertexIndices, edge.verts[0]),
-                correctIndex(excludedVertexIndices, edge.verts[1])
+                correctIndex(excludedVertexIndices, edge.verts[0].index),
+                correctIndex(excludedVertexIndices, edge.verts[1].index)
             ])
     # The following code is the color compressor. I have no clue how it works, but it works.
     if export_color and bm.loops.layers.color.active:
@@ -107,7 +110,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         name="Maximum Decimal Digits",
         description="Maximum amount of decimal digits in exported coordinates",
         default=3,
-        hard_min=0,
+        min=0,
         soft_min=1,
     )
 
@@ -116,7 +119,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         description=
         "All coordinates are multiplied by this number. Set this to 32 for 1 unit to equal the width of the Alpha ship model in-game.",
         default=1.0,
-        hard_min=0.0,
+        min=0.0,
         soft_min=0.1,
     )
 
