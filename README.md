@@ -1,5 +1,8 @@
 # \[WIP\]PewPewLive-MeshExporter
-A [Blender](https://www.blender.org/) 2.9x plugin for converting scenes into [PewPew Live](https://pewpew.live/) 3D models
+A [Blender](https://www.blender.org/) 2.9+ plugin for converting scenes into [PewPew Live](https://pewpew.live/) 3D models
+
+### What about 2.79?
+[SKPG-Tech](https://github.com/SKPG-Tech/) maintains an [unofficial 2.79 version](https://github.com/SKPG-Tech/PewPewLive-MeshExporter). You can use that if you want to, but I have no control over it aside from sending a pull request.
 
 ### Installation Instructions:
 1. Download a [release](https://github.com/ModEngineer/PewPewLive-MeshExporter/releases)
