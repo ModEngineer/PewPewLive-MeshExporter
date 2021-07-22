@@ -7,10 +7,18 @@ on:
 
 jobs:
   test:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    permissions: read-all
+    strategy:
+      max-parallel: 4
+      matrix:
+        blender-version: ["2.93"] #, "2.92", "2.91", "2.90", "2.83", "2.82", "2.81", "2.80", "2.79"]
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      - name: Install Blender
+        run: |
+          echo "test"
+          #sudo apt update
+          #sudo apt install blender=${{ matrix.blender-version }}
+      - name: Test Add-on on version ${{ matrix.blender-version }}
