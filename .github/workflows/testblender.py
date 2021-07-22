@@ -4,7 +4,7 @@ try:
     if bpy.app.version > (2, 79, 0):
         bpy.ops.preferences.addon_install(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexporter_addon.zip"))
         for mod in addon_utils.modules():
-            if mod.bl_info["name"]="PewPew Live Mesh Exporter":
+            if mod.bl_info["name"]=="PewPew Live Mesh Exporter":
                 bpy.ops.preferences.addon_enable(module=str(mod))
     else:
         bpy.ops.wm.addon_install(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexporter_addon.zip"))
