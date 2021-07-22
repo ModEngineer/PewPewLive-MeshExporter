@@ -20,7 +20,7 @@ jobs:
         run: |
           sudo snap install blender --channel=${{ matrix.blender-version }} --classic
       - run: |
-          BLENDERVERSION="${{ blender-version }}"
+          BLENDERVERSION="${{ matrix.blender-version }}"
           cp -r $GITHUB_WORKSPACE/ppl_meshexporter_addon $HOME/.config/blender/${blenderversion::4}/scripts/addons/ppl_meshexporter_addon
       - name: Test Add-on on version ${{ matrix.blender-version }}
         run: |
