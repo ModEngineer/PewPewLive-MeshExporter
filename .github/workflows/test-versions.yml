@@ -15,15 +15,16 @@ jobs:
         blender-version: ["2.93lts"] #, "2.92", "2.91", "2.90", "2.83lts", "2.82", "2.81", "2.80", "2.79"]
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Install Blender
-        run: |
-          sudo snap install blender --channel=${{ matrix.blender-version }} --classic
+      #- name: Install Blender
+      #  run: |
+      #    sudo snap install blender --channel=${{ matrix.blender-version }} --classic
       - uses: actions/checkout@v2
       - name: Install add-on
         run: |
-          BLENDERVERSION="${{ matrix.blender-version }}"
-          mkdir -p $HOME/.config/blender/${blenderversion::4}/scripts/addons/ppl_meshexporter_addon/
-          cp -r $GITHUB_WORKSPACE/ppl_meshexporter_addon/*.py $HOME/.config/blender/${blenderversion::4}/scripts/addons/ppl_meshexporter_addon/
-      - name: Test Add-on on version ${{ matrix.blender-version }}
-        run: |
-          blender -b --addons ppl_meshexporter_addon -P $GITHUB_WORKSPACE/.github/workflows/testblender.py
+           tree $GITHUB_WORKSPACE
+      #    BLENDERVERSION="${{ matrix.blender-version }}"
+      #    mkdir -p $HOME/.config/blender/${blenderversion::4}/scripts/addons/ppl_meshexporter_addon/
+      #    cp -r $GITHUB_WORKSPACE/ppl_meshexporter_addon/*.py $HOME/.config/blender/${blenderversion::4}/scripts/addons/ppl_meshexporter_addon/
+      #- name: Test Add-on on version ${{ matrix.blender-version }}
+      #  run: |
+      #    blender -b --addons ppl_meshexporter_addon -P $GITHUB_WORKSPACE/.github/workflows/testblender.py
