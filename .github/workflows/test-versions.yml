@@ -16,11 +16,11 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - run: |
-          cp -r $GITHUB_WORKSPACE/ppl_meshexporter_addon $HOME/.config/blender/${{ blender-version::4 }}/scripts/addons/ppl_meshexporter_addon
       - name: Install Blender
         run: |
           sudo snap install blender --channel=${{ matrix.blender-version }} --classic
+      - run: |
+          cp -r $GITHUB_WORKSPACE/ppl_meshexporter_addon $HOME/.config/blender/${{ blender-version::4 }}/scripts/addons/ppl_meshexporter_addon
       - name: Test Add-on on version ${{ matrix.blender-version }}
         run: |
           blender -b --addons ppl_meshexporter_addon -P $GITHUB_WORKSPACE/.github/workflows/testblender.py
