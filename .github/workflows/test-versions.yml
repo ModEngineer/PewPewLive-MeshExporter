@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install add-on
         run: |
-           tree $GITHUB_WORKSPACE
+          tree $GITHUB_WORKSPACE
           BLENDERVERSION="${{ matrix.blender-version }}"
           mkdir -p $HOME/.config/blender/${blenderversion::4}/scripts/addons/ppl_meshexporter_addon/
           cp -r $GITHUB_WORKSPACE/ppl_meshexporter_addon/*.py $HOME/.config/blender/${blenderversion::4}/scripts/addons/ppl_meshexporter_addon/
