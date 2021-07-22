@@ -8,7 +8,7 @@ try:
                 bpy.ops.preferences.addon_enable(module=str(mod))
                 break
         for object in bpy.context.scene.objects:
-            bpy.ops.select_set(True)
+            object.select_set(True)
         bpy.ops.object.delete()
     else:
         bpy.ops.wm.addon_install(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexporter_addon.zip"))
@@ -17,7 +17,7 @@ try:
                 bpy.ops.wm.addon_enable(module=str(mod))
                 break
         for object in bpy.context.scene.objects:
-            bpy.ops.select = True
+            object.select = True
         bpy.ops.object.delete()
     if bpy.app.version >= (2, 90, 0):
         bpy.ops.mesh.primitive_cube_add(location=(0, 0, 0), rotation=(0, 0, 0), scale=(1, 1, 1))
