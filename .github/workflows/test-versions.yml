@@ -21,7 +21,7 @@ jobs:
           sudo snap install blender --channel=${{ matrix.blender-version }} --classic
       - run: |
           BLENDERVERSION="${{ matrix.blender-version }}"
-          mkdir $HOME/.config/blender/${blenderversion::4}/scripts/addons/ppl_meshexporter_addon
+          mkdir -p $HOME/.config/blender/${blenderversion::4}/scripts/addons/ppl_meshexporter_addon/
           cp -r $GITHUB_WORKSPACE/ppl_meshexporter_addon $HOME/.config/blender/${blenderversion::4}/scripts/addons/ppl_meshexporter_addon
       - name: Test Add-on on version ${{ matrix.blender-version }}
         run: |
