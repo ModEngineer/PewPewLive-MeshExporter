@@ -18,8 +18,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Blender
         run: |
-          sudo apt update
-          sudo apt install blender=${{ matrix.blender-version }}
+          sudo snap install blender --channel=${{ matrix.blender-version }}/stable --classic
           
       - name: Test Add-on on version ${{ matrix.blender-version }}
         run: |
