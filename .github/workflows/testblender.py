@@ -30,13 +30,13 @@ try:
         currentobj.select_set(True)
     else:
         currentobj.select = True
+    bpy.ops.object.mode_set(mode='EDIT')
     bm = bmesh.from_edit_mesh(currentobj.data)
     for edge in bm.edges[:2]:
         edge.use_seam = True
     bm.to_mesh(currentobj.data)
     bpy.context.window_manager.pewpew_temporaryproperties.editmode_vertex_color = (0.5, 0.5, 1.0, 0.0)
     currentobj.data.vertex_colors.new()
-    bpy.ops.object.mode_set(mode='EDIT')
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.mesh.set_vertex_colors()
     bpy.ops.object.mode_set(mode='OBJECT')
