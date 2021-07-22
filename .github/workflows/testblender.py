@@ -9,7 +9,7 @@ try:
     else:
         bpy.ops.wm.addon_install(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexporter_addon.zip"))
         for mod in addon_utils.modules():
-            if mod.bl_info["name"]="PewPew Live Mesh Exporter":
+            if mod.bl_info["name"]=="PewPew Live Mesh Exporter":
                 bpy.ops.wm.addon_enable(module=str(mod))
     if bpy.app.version >= (2, 90, 0):
         bpy.ops.mesh.primitive_cube_add(location=(0, 0, 0), rotation=(0, 0, 0), scale=(1, 1, 1))
