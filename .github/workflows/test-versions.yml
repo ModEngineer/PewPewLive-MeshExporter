@@ -22,3 +22,5 @@ jobs:
           #sudo apt update
           #sudo apt install blender=${{ matrix.blender-version }}
       - name: Test Add-on on version ${{ matrix.blender-version }}
+        run: |
+          echo "test 2"
