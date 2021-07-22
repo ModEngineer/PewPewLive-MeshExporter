@@ -11,10 +11,10 @@ try:
         bpy.ops.object.delete()
     if bpy.app.version >= (2, 90, 0):
         bpy.ops.mesh.primitive_cube_add(location=(0, 0, 0), rotation=(0, 0, 0), scale=(1, 1, 1))
-        bpy.ops.mesh.primitive_cube_add(location=(5.25, 5.25, 5.25), rotation=(0, 0, 0), scale=(1, 1, 1))
+        bpy.ops.mesh.primitive_cube_add(location=(5.25, 5.25, 5.25), rotation=(56, 241, 72), scale=(1, 1, 1))
     else:
         bpy.ops.mesh.primitive_cube_add(location=(0, 0, 0), rotation=(0, 0, 0))
-        bpy.ops.mesh.primitive_cube_add(location=(5.25, 5.25, 5.25), rotation=(0, 0, 0))
+        bpy.ops.mesh.primitive_cube_add(location=(5.25, 5.25, 5.25), rotation=(56, 241, 72))
     currentobj = bpy.context.scene.objects[0]
     if bpy.app.version > (2, 79, 0):
         currentobj.select_set(True)
