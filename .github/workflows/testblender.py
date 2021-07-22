@@ -3,19 +3,11 @@ import bpy, random, os, addon_utils, bmesh
 try:
     if bpy.app.version > (2, 79, 0):
         bpy.ops.preferences.addon_install(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexporter_addon.zip"))
-        for mod in addon_utils.modules():
-            if mod.bl_info["name"]=="PewPew Live Mesh Exporter":
-                bpy.ops.preferences.addon_enable(module=str(mod))
-                break
         for object in bpy.context.scene.objects:
             object.select_set(True)
         bpy.ops.object.delete()
     else:
         bpy.ops.wm.addon_install(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexporter_addon.zip"))
-        for mod in addon_utils.modules():
-            if mod.bl_info["name"]=="PewPew Live Mesh Exporter":
-                bpy.ops.wm.addon_enable(module=str(mod))
-                break
         for object in bpy.context.scene.objects:
             object.select = True
         bpy.ops.object.delete()
