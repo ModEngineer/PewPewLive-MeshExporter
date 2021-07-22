@@ -12,13 +12,13 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        blender-version: ["2.93"] #, "2.92", "2.91", "2.90", "2.83", "2.82", "2.81", "2.80", "2.79"]
+        blender-version: ["2.93lts"] #, "2.92", "2.91", "2.90", "2.83lts", "2.82", "2.81", "2.80", "2.79"]
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - name: Install Blender
         run: |
-          sudo snap install blender --channel=${{ matrix.blender-version }}/stable --classic
+          sudo snap install blender --channel=${{ matrix.blender-version }} --classic
           
       - name: Test Add-on on version ${{ matrix.blender-version }}
         run: |
