@@ -16,7 +16,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - uses: |
+      - run: |
           zip --include '*.py' -r $GITHUB_WORKSPACE/ppl_meshexporter_addon.zip $GITHUB_WORKSPACE
       - name: Install Blender
         run: |
