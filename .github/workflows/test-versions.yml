@@ -17,7 +17,7 @@ jobs:
       - name: Install Blender
         run: |
           sudo snap install blender --channel=${{ matrix.blender-version }} --classic
-       Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      #Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - name: Install add-on
         run: |
