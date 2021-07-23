@@ -1,4 +1,4 @@
-import bpy, os, bmesh
+import bpy, bmesh, addon_utils, os
 
 try:
     if bpy.app.version > (2, 79, 0):
