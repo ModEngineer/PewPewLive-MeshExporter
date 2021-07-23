@@ -1,7 +1,7 @@
 import bpy, bmesh, addon_utils, os, importlib.util
 
 try:
-    spec = importlib.util.spec_from_file_location("ppl_meshexport_addon", os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexport_addon", "__init__.py"))
+    spec = importlib.util.spec_from_file_location("ppl_meshexport_addon", os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexport_addon"))
     ppl_meshexport_addon = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(ppl_meshexport_addon)
     ppl_meshexport_addon.register()
