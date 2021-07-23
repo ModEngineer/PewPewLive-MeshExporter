@@ -1,6 +1,23 @@
 import bpy, bmesh, addon_utils, os, sys
+try: 
+    class SetEditModeVertexColorOperator(bpy.types.Operator):
+        bl_idname="mesh.set_editmode_vertex_color"
+        bl_label="Set Edit Mode Vertex Color"
 
-try:
+        color: bpy.props.FloatVectorProperty(
+            name="Color",
+            subtype="COLOR",
+            min=0,
+            max=1,
+            step=1,
+            precision=6,
+            size=[3, 4][int(bpy.app.version>(2, 79, 0))],
+            update=updateVertexColors,
+            default=[(1.0, 1.0, 1.0), (1.0, 1.0, 1.0, 1.0)][int(bpy.app.version>(2, 79, 0))])
+        def execute(self, context):
+            context.scene.pewpew_sceneproperties.editmode_vertex_color = self.color
+            return {'FINISHED'}
+    bpy.utils.register_class(SetEditModeVertexColorOperator)
     if bpy.app.version > (2, 79, 0):
         for object in bpy.context.scene.objects:
             object.select_set(True)
@@ -36,10 +53,11 @@ try:
         edge.seam = True
     bm.to_mesh(currentobj.data)
     bpy.ops.object.mode_set(mode='EDIT')
-    bpy.context.scene.pewpew_sceneproperties.editmode_vertex_color = (0.5, 0.5, 1.0, 0.0)
+     = (0.5, 0.5, 1.0, 0.0)
     currentobj.data.vertex_colors.new()
     currentobj.data.vertex_colors.active = currentobj.data.vertex_colors[0]
     currentobj.data.vertex_colors.active_index = 0
+    bpy.ops.mesh.set_editmode_vertex_color((0.5, 0.5, 1.0, 1.0))
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.mesh.set_vertex_colors()
     bpy.ops.object.mode_set(mode='OBJECT')
