@@ -16,6 +16,9 @@ try:
         def execute(self, context):
             context.scene.pewpew_sceneproperties.editmode_vertex_color = self.color
             return {'FINISHED'}
+        def invoke(self, context, colour):
+            self.color = colour
+            return self.execute(context)
     bpy.utils.register_class(SetEditModeVertexColorOperator)
     if bpy.app.version > (2, 79, 0):
         for object in bpy.context.scene.objects:
