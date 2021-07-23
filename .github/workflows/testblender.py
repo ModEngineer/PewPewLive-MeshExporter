@@ -7,7 +7,7 @@ try:
         bpy.ops.object.delete()
         for mod in addon_utils.modules():
             if mod.bl_info["name"]=="PewPew Live Mesh Exporter":
-                bpy.ops.preferences.addon_enable(module=str(mod))
+                addon_utils.enable(module=str(mod))
                 break
     else:
         for object in bpy.context.scene.objects:
@@ -15,7 +15,7 @@ try:
         bpy.ops.object.delete()
         for mod in addon_utils.modules():
             if mod.bl_info["name"]=="PewPew Live Mesh Exporter":
-                bpy.ops.wm.addon_enable(module=str(mod))
+                addon_utils.enable(module=str(mod))
                 break
     if bpy.app.version >= (2, 90, 0):
         bpy.ops.mesh.primitive_cube_add(location=(0, 0, 0), rotation=(0, 0, 0), scale=(1, 1, 1))
