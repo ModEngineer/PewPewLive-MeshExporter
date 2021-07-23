@@ -22,8 +22,7 @@ jobs:
       - name: Install add-on
         run: |
           BLENDERVERSION="${{ matrix.blender-version }}"
-          mkdir -p $HOME/.config/blender/${blenderversion::4}/scripts/addons/ppl_meshexport_addon/
-          cp -r $GITHUB_WORKSPACE/ppl_meshexport_addon $HOME/.config/blender/${blenderversion::4}/scripts/addons/ppl_meshexport_addon
+          zip --include '*.py' -r $GITHUB_WORKSPACE/ppl_meshexporter_addon.zip $GITHUB_WORKSPACE
       - name: Test Add-on on version ${{ matrix.blender-version }}
         run: |
           blender -b -P $GITHUB_WORKSPACE/.github/workflows/testblender.py --python-exit-code 2
