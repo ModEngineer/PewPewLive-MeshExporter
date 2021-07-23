@@ -24,6 +24,7 @@ try:
         for object in bpy.context.scene.objects:
             object.select_set(True)
         bpy.ops.object.delete()
+        bpy.ops.preferences.addon_install(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexport_addon.zip"))
         for mod in addon_utils.modules():
             if mod.bl_info["name"]=="PewPew Live Mesh Exporter":
                 for modname, mod2 in sys.modules.items():
@@ -34,6 +35,7 @@ try:
         for object in bpy.context.scene.objects:
             object.select = True
         bpy.ops.object.delete()
+        bpy.ops.wm.addon_install(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexport_addon.zip"))
         for mod in addon_utils.modules():
             if mod.bl_info["name"]=="PewPew Live Mesh Exporter":
                 for modname, mod2 in sys.modules.items():
