@@ -12,7 +12,6 @@ try:
             step=1,
             precision=6,
             size=[3, 4][int(bpy.app.version>(2, 79, 0))],
-            update=updateVertexColors,
             default=[(1.0, 1.0, 1.0), (1.0, 1.0, 1.0, 1.0)][int(bpy.app.version>(2, 79, 0))])
         def execute(self, context):
             context.scene.pewpew_sceneproperties.editmode_vertex_color = self.color
