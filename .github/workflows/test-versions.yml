@@ -28,4 +28,4 @@ jobs:
           tree $HOME
       - name: Test Add-on on version ${{ matrix.blender-version }}
         run: |
-          blender -b --addons ppl_meshexporter_addon -P $GITHUB_WORKSPACE/.github/workflows/testblender.py
+          blender -b -P $GITHUB_WORKSPACE/.github/workflows/testblender.py
