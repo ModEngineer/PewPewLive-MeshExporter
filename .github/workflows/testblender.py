@@ -53,7 +53,6 @@ try:
         edge.seam = True
     bm.to_mesh(currentobj.data)
     bpy.ops.object.mode_set(mode='EDIT')
-     = (0.5, 0.5, 1.0, 0.0)
     currentobj.data.vertex_colors.new()
     currentobj.data.vertex_colors.active = currentobj.data.vertex_colors[0]
     currentobj.data.vertex_colors.active_index = 0
