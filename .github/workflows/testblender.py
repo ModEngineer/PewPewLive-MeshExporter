@@ -58,7 +58,7 @@ try:
     currentobj.data.vertex_colors.new()
     currentobj.data.vertex_colors.active = currentobj.data.vertex_colors[0]
     currentobj.data.vertex_colors.active_index = 0
-    bpy.ops.mesh.set_editmode_vertex_color('EXEC_DEFAULT', color=(0.5, 0.5, 1.0, 1.0))
+    #bpy.ops.mesh.set_editmode_vertex_color('EXEC_DEFAULT', color=(0.5, 0.5, 1.0, 1.0))
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.mesh.set_vertex_colors()
     bpy.ops.object.mode_set(mode='OBJECT')
