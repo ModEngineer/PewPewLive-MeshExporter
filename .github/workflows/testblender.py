@@ -1,22 +1,18 @@
-import bpy, bmesh, addon_utils, os
+import bpy, bmesh, addon_utils, os, importlib.util
 
 try:
+    spec = importlib.spec_from_file_location("ppl_meshexport_addon", os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexport_addon", "__init__.py"))
+    ppl_meshexport_addon = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ppl_meshexport_addon)
+    ppl_meshexport_addon.register()
     if bpy.app.version > (2, 79, 0):
         for object in bpy.context.scene.objects:
             object.select_set(True)
         bpy.ops.object.delete()
-        for mod in addon_utils.modules():
-            if mod.bl_info["name"]=="PewPew Live Mesh Exporter":
-                bpy.ops.preferences.addon_enable(module=str(mod))
-                break
     else:
         for object in bpy.context.scene.objects:
             object.select = True
         bpy.ops.object.delete()
-        for mod in addon_utils.modules():
-            if mod.bl_info["name"]=="PewPew Live Mesh Exporter":
-                bpy.ops.wm.addon_enable(module=str(mod))
-                break
     if bpy.app.version >= (2, 90, 0):
         bpy.ops.mesh.primitive_cube_add(location=(0, 0, 0), rotation=(0, 0, 0), scale=(1, 1, 1))
         bpy.ops.mesh.primitive_cube_add(location=(5.25, 5.25, 5.25), rotation=(56, 241, 72), scale=(1, 1, 1))
@@ -44,6 +40,7 @@ try:
     else:
         currentobj.select = True
     bpy.ops.pewpewlive_meshexporter.exportmeshfromscene(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], "test.lua"), max_decimal_digits=3, multiplier=5, only_selected=True, use_local=True, exclude_seamed_edges=True, export_color=True)
+    ppl_meshexport_addon.unregister()
 except:
     import sys, traceback
     traceback.print_exc()
