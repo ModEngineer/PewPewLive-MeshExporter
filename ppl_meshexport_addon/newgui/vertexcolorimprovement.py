@@ -22,7 +22,7 @@ class VertexColorOperator(bpy.types.Operator):
             if vertex.select and not vertex.hide:
                 for loops in vertex.link_loops:
                     loops[
-                        colorloop] = context.window_manager.pewpew_temporaryproperties.editmode_vertex_color
+                        colorloop] = context.scene.pewpew_sceneproperties.editmode_vertex_color
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.mode_set(mode='EDIT')
         return {"FINISHED"}
@@ -42,7 +42,7 @@ class DATA_PT_vertex_color_improvement(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.prop(context.window_manager.pewpew_temporaryproperties,
+        layout.prop(context.scene.pewpew_sceneproperties,
                     "editmode_vertex_color",
                     text="Vertex colors")
         layout.prop(context.preferences.addons[__package__.partition(".")

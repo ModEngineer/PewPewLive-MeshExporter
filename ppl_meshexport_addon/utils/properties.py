@@ -4,7 +4,7 @@ import bpy
 from ..newgui.vertexcolorimprovement import updateVertexColors
 
 
-class PewPewTemporaryProperties(bpy.types.PropertyGroup):
+class PewPewSceneProperties(bpy.types.PropertyGroup):
     #newgui properties:
     editmode_vertex_color: bpy.props.FloatVectorProperty(
         name="Color",
@@ -30,9 +30,9 @@ class PewPewMeshExporterPreferences(bpy.types.AddonPreferences):
 
 
 def register():
-    bpy.types.WindowManager.pewpew_temporaryproperties = bpy.props.PointerProperty(
-        type=PewPewTemporaryProperties)
+    bpy.types.Scene.pewpew_sceneproperties = bpy.props.PointerProperty(
+        type=PewPewSceneProperties)
 
 
 def unregister():
-    del bpy.types.WindowManager.pewpew_temporaryproperties
+    del bpy.types.Scene.pewpew_sceneproperties

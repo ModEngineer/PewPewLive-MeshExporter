@@ -3,7 +3,7 @@ from .utils import properties
 from .newgui import vertexcolorimprovement
 from . exporters import exportmesh
 importorder = [
-        properties.PewPewTemporaryProperties,
+        properties.PewPewsceneproperties,
         properties.PewPewMeshExporterPreferences,
         (properties.register, properties.unregister),
         vertexcolorimprovement.DATA_PT_vertex_color_improvement,
