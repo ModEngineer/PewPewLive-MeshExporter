@@ -29,6 +29,7 @@ try:
                 for modname, mod2 in sys.modules.items():
                     if mod2==mod:
                         bpy.ops.preferences.addon_enable(module=modname)
+                        print("Add-on enabled")
     else:
         for object in bpy.context.scene.objects:
             object.select = True
@@ -38,6 +39,7 @@ try:
                 for modname, mod2 in sys.modules.items():
                     if mod2==mod:
                         bpy.ops.wm.addon_enable(module=modname)
+                        print("Add-on enabled")
     if bpy.app.version >= (2, 90, 0):
         bpy.ops.mesh.primitive_cube_add(location=(0, 0, 0), rotation=(0, 0, 0), scale=(1, 1, 1))
         bpy.ops.mesh.primitive_cube_add(location=(5.25, 5.25, 5.25), rotation=(56, 241, 72), scale=(1, 1, 1))
