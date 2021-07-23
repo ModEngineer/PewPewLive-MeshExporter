@@ -1,9 +1,6 @@
-import bpy, bmesh, addon_utils, os, sys
-sys.path.append(os.environ["GITHUB_WORKSPACE"])
-import ppl_meshexport_addon
+import bpy, bmesh, addon_utils, os
 
 try:
-    ppl_meshexport_addon.register()
     if bpy.app.version > (2, 79, 0):
         for object in bpy.context.scene.objects:
             object.select_set(True)
@@ -31,6 +28,8 @@ try:
     bpy.ops.object.mode_set(mode='EDIT')
     bpy.context.scene.pewpew_sceneproperties.editmode_vertex_color = (0.5, 0.5, 1.0, 0.0)
     currentobj.data.vertex_colors.new()
+    currentobj.data.vertex_colors.active = currentobj.data.vertex_colors[0]
+    currentobj.data.vertex_colors.active_index = 0
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.mesh.set_vertex_colors()
     bpy.ops.object.mode_set(mode='OBJECT')
