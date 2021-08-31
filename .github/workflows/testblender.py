@@ -1,5 +1,7 @@
 import bpy, bmesh, addon_utils, os, sys
 print(__name__)
+from . import ppl_meshexport_addon
+ppl_meshexport_addon.register()
 """
 #Commented out old code to do some diagnostics
 try: 
