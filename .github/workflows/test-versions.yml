@@ -29,4 +29,4 @@ jobs:
           cp -R $GITHUB_WORKSPACE/ppl_meshexport_addon $GITHUB_WORKSPACE/tempmodulefolder/ppl_meshexport_addon
       - name: Test Add-on on version ${{ matrix.blender-version }}
         run: |
-          blender -b -P $GITHUB_WORKSPACE/.github/workflows/testblender.py --python-exit-code 2
+          blender -b -P $GITHUB_WORKSPACE/.github/workflows/testblender.py --python-exit-code -1
