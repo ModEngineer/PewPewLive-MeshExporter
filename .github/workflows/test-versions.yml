@@ -17,6 +17,7 @@ jobs:
       - name: Install Blender
         run: |
           if [ "${{ matrix.blender-version}}" = "2.79" ]; then
+            sudo apt-get update
             sudo apt-get install libglu1
           fi
           sudo snap install blender --channel=${{ matrix.blender-version }} --classic
