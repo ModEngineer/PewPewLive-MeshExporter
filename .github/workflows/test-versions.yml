@@ -12,11 +12,11 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        blender-version: ["2.93lts", "2.92", "2.91", "2.90", "2.83lts", "2.82", "2.81", "2.80", "2.79"]
+        blender-version: ["2.79"] #["2.93lts", "2.92", "2.91", "2.90", "2.83lts", "2.82", "2.81", "2.80", "2.79"]
     steps:
       - name: Install Blender
         run: |
-          if [ "${{ matrix.blender-version}}" = "2.79"]; then
+          if [ "${{ matrix.blender-version}}" = "2.79" ]; then
             sudo apt-get install libglu1
           fi
           sudo snap install blender --channel=${{ matrix.blender-version }} --classic
