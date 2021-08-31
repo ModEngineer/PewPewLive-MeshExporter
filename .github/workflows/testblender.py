@@ -22,8 +22,10 @@ try:
     currentobj = bpy.context.scene.objects[0]
     if bpy.app.version > (2, 79, 0):
         currentobj.select_set(True)
+        bpy.context.view_layer.objects.active = currentobj
     else:
         currentobj.select = True
+        bpy.context.object = currentobj
     bm = bmesh.new()
     bm.from_mesh(currentobj.data)
     for edge in bm.edges[:2]:
@@ -40,7 +42,6 @@ try:
     else:
         currentobj.select = True
     bpy.ops.pewpewlive_meshexporter.exportmeshfromscene(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], "test.lua"), max_decimal_digits=3, multiplier=5, only_selected=True, use_local=True, exclude_seamed_edges=True, export_color=True)
-    ppl_meshexport_addon.unregister()
 except:
     import sys, traceback
     traceback.print_exc()
