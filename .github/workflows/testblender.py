@@ -1,25 +1,8 @@
 import bpy, bmesh, addon_utils, os, sys
+print(__name__)
+"""
+#Commented out old code to do some diagnostics
 try: 
-    class SetEditModeVertexColorOperator(bpy.types.Operator):
-        bl_idname="mesh.set_editmode_vertex_color"
-        bl_label="Set Edit Mode Vertex Color"
-
-        color: bpy.props.FloatVectorProperty(
-            name="Color",
-            subtype="COLOR",
-            min=0,
-            max=1,
-            step=1,
-            precision=6,
-            size=[3, 4][int(bpy.app.version>(2, 79, 0))],
-            default=[(1.0, 1.0, 1.0), (1.0, 1.0, 1.0, 1.0)][int(bpy.app.version>(2, 79, 0))])
-        def execute(self, context):
-            context.scene.pewpew_sceneproperties.editmode_vertex_color = self.color
-            return {'FINISHED'}
-        def invoke(self, context, colour):
-            self.color = colour
-            return self.execute(context)
-    bpy.utils.register_class(SetEditModeVertexColorOperator)
     if bpy.app.version > (2, 79, 0):
         for object in bpy.context.scene.objects:
             object.select_set(True)
@@ -37,7 +20,7 @@ try:
         for object in bpy.context.scene.objects:
             object.select = True
         bpy.ops.object.delete()
-        bpy.ops.wm.addon_install(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexport_addon.zip"))
+        #bpy.ops.wm.addon_install(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], "ppl_meshexport_addon.zip"))
         print(addon_utils.modules())
         #for mod in addon_utils.modules():
         #    if mod.bl_info["name"]=="PewPew Live Mesh Exporter":
@@ -80,3 +63,4 @@ except:
     import sys, traceback
     traceback.print_exc()
     sys.exit(1)
+"""
