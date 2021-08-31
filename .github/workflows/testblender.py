@@ -1,6 +1,6 @@
 import bpy, bmesh
 print(__name__)
-from . import ppl_meshexport_addon
+import ppl_meshexport_addon
 ppl_meshexport_addon.register()
 try: 
     if bpy.app.version > (2, 79, 0):
