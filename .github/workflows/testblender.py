@@ -1,5 +1,6 @@
-import bpy, bmesh
+import bpy, bmesh, sys, os
 print(__name__)
+sys.path.append(os.path.join(os.environ["GITHUB_WORKSPACE"], "tempmodulefolder"))
 import ppl_meshexport_addon
 ppl_meshexport_addon.register()
 try: 
