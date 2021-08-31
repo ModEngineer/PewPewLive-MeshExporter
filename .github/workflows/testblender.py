@@ -4,12 +4,12 @@ sys.path.append(os.path.join(os.environ["GITHUB_WORKSPACE"], "tempmodulefolder")
 import ppl_meshexport_addon
 try: 
     if bpy.app.version > (2, 79, 0):
-        bpy.ops.preferences.addon_enable(module=ppl_meshexport_addon)
+        bpy.ops.preferences.addon_enable(module="ppl_meshexport_addon")
         for object in bpy.context.scene.objects:
             object.select_set(True)
         bpy.ops.object.delete()
     else:
-        bpy.ops.wm.addon_enable(module=ppl_meshexport_addon)
+        bpy.ops.wm.addon_enable(module="ppl_meshexport_addon")
         for object in bpy.context.scene.objects:
             object.select = True
         bpy.ops.object.delete()
