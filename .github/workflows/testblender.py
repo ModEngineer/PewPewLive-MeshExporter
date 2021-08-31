@@ -31,8 +31,6 @@ try:
     bm.to_mesh(currentobj.data)
     bpy.ops.object.mode_set(mode='EDIT')
     currentobj.data.vertex_colors.new()
-    currentobj.data.vertex_colors.active = currentobj.data.vertex_colors[0]
-    currentobj.data.vertex_colors.active_index = 0
     bpy.context.scene.pewpew_sceneproperties.editmode_vertex_color = (0.5, 0.5, 1.0, 1.0)
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.mesh.set_vertex_colors()
