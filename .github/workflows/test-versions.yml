@@ -16,12 +16,14 @@ jobs:
     steps:
       - name: Install Blender
         run: |
+          if [ "${{ matrix.blender-version}}" = "2.79"]; then
+            sudo apt-get install libglu1
+          fi
           sudo snap install blender --channel=${{ matrix.blender-version }} --classic
       #Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - name: Install add-on
         run: |
-          BLENDERVERSION="${{ matrix.blender-version }}"
           mkdir $GITHUB_WORKSPACE/tempmodulefolder
           cp -R $GITHUB_WORKSPACE/ppl_meshexport_addon $GITHUB_WORKSPACE/tempmodulefolder/ppl_meshexport_addon
       - name: Test Add-on on version ${{ matrix.blender-version }}
