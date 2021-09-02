@@ -82,8 +82,9 @@ def serializeMesh(object, use_local, export_color, exclude_seamed_edges,
                             out[stringKey("colors")][color].append(
                                 [color_index, colorIndices[index + 1]])
                             partialRange = True
-                    else:
+                    elif partialRange:
                         partialRange = False
+                    else:
                         out[stringKey("colors")][color].append(color_index)
                 elif partialRange == True:
                     pass
