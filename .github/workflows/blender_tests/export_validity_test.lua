@@ -1,13 +1,17 @@
+function cmpr_two_vertexes(test, baseline)
+   if #test==2 and #baseline==2 then
+      return new_vertex[1] == target_vertex[1] and new_vertex[2] == target_vertex[2]
+   elseif #test==3 and #baseline==3 then
+      return new_vertex[1] == target_vertex[1] and new_vertex[2] == target_vertex[2] and new_vertex[3] == target_vertex[3]
+   else
+      return false
+   end
+end
+
 function find_vertex(new_vertices, target_vertex)
    for index, new_vertex in pairs(new_vertices) do
-      if #new_vertex==2 and #target_vertex==2 then
-         if new_vertex[1] == target_vertex[1] and new_vertex[2] == target_vertex[2] then
-            return index
-         end
-      elseif #new_vertex==3 and #target_vertex==3 then
-         if new_vertex[1] == target_vertex[1] and new_vertex[2] == target_vertex[2] and new_vertex[3] == target_vertex[3] then
-            return index
-         end
+      if cmpr_two_vertexes(new_vertex, target_vertex) then
+         return index
       end
    end
    return -1
@@ -50,7 +54,7 @@ function cmpr_segments(test, baseline) -- Checks to see if the segments are the 
    for base_index, base_segment in pairs(baseline.segments) do
       local validsegment = false
       for index, segment in pairs(test.segments) do
-         if base_segment[1]~=base_segment[2] and segment[1]~=segment[2] and (baseline.vertexes[base_segment[1] + 1]==test.vertexes[segment[1]+1] or baseline.vertexes[base_segment[1] + 1]==test.vertexes[segment[2]+1]) and (baseline.vertexes[base_segment[2] + 1]==test.vertexes[segment[1]+1] or baseline.vertexes[base_segment[2] + 1]==test.vertexes[segment[2]+1]) then
+         if base_segment[1]~=base_segment[2] and segment[1]~=segment[2] and (cmpr_two_vertexes(baseline.vertexes[base_segment[1] + 1], test.vertexes[segment[1]+1]) or cmpr_two_vertexes(baseline.vertexes[base_segment[1] + 1], test.vertexes[segment[2]+1])) and (cmpr_two_vertexes(baseline.vertexes[base_segment[2] + 1], test.vertexes[segment[1]+1]) or cmpr_two_vertexes(baseline.vertexes[base_segment[2] + 1], test.vertexes[segment[2]+1])) then
             validsegment = true
             break
          end
