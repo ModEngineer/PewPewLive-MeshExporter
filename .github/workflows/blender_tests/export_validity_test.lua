@@ -14,10 +14,12 @@ function cmpr_colors(test, baseline) --  Checks to see if the colors are the sam
       local base_index = find_vertex(baseline.vertexes, vertex) -- Attempts to find the test's vertex in the baseline
 
       if base_index == -1 then
+         print("cmpr_colors caused the test fail.")
          return false
       end
 
       if baseline.colors[base_index] ~= color then -- Checks to see if the color tied to each vertex is the same color
+         print("cmpr_colors caused the test fail.")
          return false
       end
 
@@ -31,6 +33,7 @@ function cmpr_vertices(test, baseline) -- Checks to see if the vertices are the 
       local base_index = find_vertex(baseline.vertexes, vertex) -- Attempts to find the test's vertex in the baseline
 
       if base_index == -1 then
+         print("cmpr_vertices caused the test fail.")
          return false
       end
 
@@ -47,6 +50,7 @@ function cmpr_segments(test, baseline) -- Checks to see if the segments are the 
          end
       end
       if not validsegment then
+         print("cmpr_segments caused the test fail.")
          return false
       end
       --[[ Commenting this out because it's unnecessarily complex for the purposes of testing 2-vertex segments. The above code is enough. If uncommenting this for whatever reason, comment out the above code
@@ -77,6 +81,7 @@ function cmpr_meshes(test, baseline)
    elseif not (test["colors"] or baseline["colors"]) then
       return cmpr_vertices(test, baseline) and cmpr_segments(test, baseline) and #test.vertexes==#baseline.vertexes and #test.segments==#baseline.segments
    else
+      print("cmpr_meshes caused the test fail.")
       return false
    end
 end
