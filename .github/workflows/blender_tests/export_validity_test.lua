@@ -14,12 +14,12 @@ function cmpr_colors(test, baseline) --  Checks to see if the colors are the sam
       local base_index = find_vertex(baseline.vertexes, vertex) -- Attempts to find the test's vertex in the baseline
 
       if base_index == -1 then
-         print("cmpr_colors caused the test fail.")
+         print("cmpr_colors caused the test fail. color was: ", color, " base index not found.")
          return false
       end
 
       if baseline.colors[base_index] ~= color then -- Checks to see if the color tied to each vertex is the same color
-         print("cmpr_colors caused the test fail.")
+         print("cmpr_colors caused the test fail. color was: ", color, " base color was: ", baseline.colors[base_index])
          return false
       end
 
