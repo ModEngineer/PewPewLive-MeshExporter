@@ -84,7 +84,7 @@ end
 if arg[1]=="0" then
    local baseline_meshes=require("decompresscolors")({{vertexes={{-5,-5,-5},{-5,-5,5},{-5,5,-5},{-5,5,5},{5,-5,-5},{5,-5,5},{5,5,-5},{5,5,5}},segments={{2,0},{0,1},{3,2},{6,2},{7,6},{4,6},{7,5},{5,4},{0,4},{5,1}},colors={['0x8080ffff']={{0,3},{5,7}},['0xff8080ff']={4}}}})
    local test_meshes=require("test")
-   if cmpr_meshes(test_meshes[0], baseline_meshes[0]) then
+   if cmpr_meshes(test_meshes[1], baseline_meshes[1]) then
       os.exit(0)
    else
       os.exit(1)
@@ -92,7 +92,7 @@ if arg[1]=="0" then
 else
    local baseline_meshes=require("./decompresscolors")({{vertexes={{-5,-5,-5},{-5,-5,5},{-5,5,-5},{-5,5,5},{5,-5,-5},{5,-5,5},{5,5,-5},{5,5,5}},segments={{2,0},{0,1},{1,3},{3,2},{6,2},{3,7},{7,6},{4,6},{7,5},{5,4},{0,4},{5,1}}},{vertexes={{26.258,33.355,31.202},{18.456,30.01,25.916},{28.052,24.063,34.433},{20.25,20.718,29.147},{32.25,31.782,23.353},{24.448,28.437,18.067},{34.044,22.49,26.584},{26.242,19.145,21.298}},segments={{2,0},{0,1},{3,2},{6,2},{7,6},{4,6},{7,5},{5,4},{0,4},{5,1}},colors={['0x8080ffff']={{0,3},{5,7}},['0xff8080ff']={4}}}})
    local test_meshes=require("test2")
-   if cmpr_meshes(test_meshes[0], baseline_meshes[0]) and cmpr_meshes(test_meshes[1], baseline_meshes[1]) then
+   if cmpr_meshes(test_meshes[1], baseline_meshes[1]) and cmpr_meshes(test_meshes[2], baseline_meshes[2]) then
       os.exit(0)
    else
       os.exit(1)
