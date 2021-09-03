@@ -83,7 +83,7 @@ try:
     else:
         currentobj.select = True
     try:
-        bpy.ops.pewpew_live_meshexporter.exportmeshfromscene(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests", "test.lua"), max_decimal_digits=3, multiplier=5, only_selected=True, use_local=True, exclude_seamed_edges=True, export_color=True, color_decompressor_location="./decompresscolors")
+        bpy.ops.pewpew_live_meshexporter.exportmeshfromscene(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests", "test.lua"), max_decimal_digits=3, multiplier=5, only_selected=True, use_local=True, exclude_seamed_edges=True, export_color=True, color_decompressor_location="decompresscolors")
         test_results["tracebacks"].append(None)
     except Exception:
         test_results["tracebacks"].append(traceback.format_exc())
@@ -91,7 +91,7 @@ try:
     
     #Test object export without local coordinates or only selection
     try:
-        bpy.ops.pewpew_live_meshexporter.exportmeshfromscene(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests",  "test2.lua"), max_decimal_digits=3, multiplier=5, only_selected=False, use_local=False, exclude_seamed_edges=True, export_color=True, color_decompressor_location="./decompresscolors")
+        bpy.ops.pewpew_live_meshexporter.exportmeshfromscene(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests",  "test2.lua"), max_decimal_digits=3, multiplier=5, only_selected=False, use_local=False, exclude_seamed_edges=True, export_color=True, color_decompressor_location="decompresscolors")
         test_results["tracebacks"].append(None)
     except Exception:
         test_results["tracebacks"].append(traceback.format_exc())
