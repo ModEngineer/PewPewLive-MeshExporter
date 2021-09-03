@@ -25,23 +25,7 @@ jobs:
     outputs:
       addonfiles: ${{ steps.changes.outputs.addonfiles }}
     steps:
-      - uses: actions/checkout@v2
-      - name: get the sha
-        run: |
-          echo 
-        
-      - name: Check changed files
-        id: changes
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "::set-output name=addonfiles::workflow_dispatch_skip"
-          elif [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "::set-output name=addonfiles::$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep "ppl_meshexport_addon.*" | xargs)"
-          elif [ "${{ github.event_name }}" = "push" ]; then
-            echo "::set-output name=addonfiles::$(git diff --name-only $( "$GITHUB_CONTEXT"| jq '.event.commits[].id' | tail -2 | head -1 |sed 's/\"//g' ) ${{ github.sha }} | grep "ppl_meshexport_addon.*" | xargs)"
-          fi
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
+      #tbd
   test:
     runs-on: ubuntu-latest
     needs: changedfiles
