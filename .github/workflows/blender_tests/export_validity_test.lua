@@ -1,8 +1,8 @@
 function cmpr_two_vertexes(test, baseline)
    if #test==2 and #baseline==2 then
-      return new_vertex[1] == target_vertex[1] and new_vertex[2] == target_vertex[2]
+      return test[1] == baseline[1] and test[2] == baseline[2]
    elseif #test==3 and #baseline==3 then
-      return new_vertex[1] == target_vertex[1] and new_vertex[2] == target_vertex[2] and new_vertex[3] == target_vertex[3]
+      return test[1] == baseline[1] and test[2] == baseline[2] and test[3] == baseline[3]
    else
       return false
    end
