@@ -73,7 +73,7 @@ end
 function cmpr_meshes(test, baseline)
    if test["colors"] and baseline["colors"] then
       return cmpr_colors(test, baseline) and cmpr_vertices(test, baseline) and cmpr_segments(test, baseline) and #test.colors==#baseline.colors and #test.vertexes==#baseline.vertexes and #test.segments==#baseline.segments
-   elseif not (test["colors"] or baseline["colors"])
+   elseif not (test["colors"] or baseline["colors"]) then
       return cmpr_vertices(test, baseline) and cmpr_segments(test, baseline) and #test.vertexes==#baseline.vertexes and #test.segments==#baseline.segments
    else
       return false
