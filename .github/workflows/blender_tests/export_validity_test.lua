@@ -38,7 +38,7 @@ function cmpr_vertices(test, baseline) -- Checks to see if the vertices are the 
    return true
 end
 
-function cmpr_segments(test,baseline) -- Checks to see if the segments are the same
+function cmpr_segments(test, baseline) -- Checks to see if the segments are the same
    for base_index, base_segment in pairs(baseline.segments) do
       local validsegment = false
       for index, segment in pairs(test.segments) do
