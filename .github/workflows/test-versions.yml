@@ -1,5 +1,7 @@
 # This is a basic workflow to help you get started with Actions
 
+# github.event_name can be used to get the name of the event that started the workflow
+
 name: Test Versions
 
 on:
