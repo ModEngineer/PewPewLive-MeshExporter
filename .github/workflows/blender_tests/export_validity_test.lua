@@ -15,7 +15,7 @@ end
 
 function cmpr_colors(test, baseline) --  Checks to see if the colors are the same
    for index, color in pairs(test.colors) do
-
+      print(index)
       local vertex = test.vertexes[index]
       local base_index = find_vertex(baseline.vertexes, vertex) -- Attempts to find the test's vertex in the baseline
 
