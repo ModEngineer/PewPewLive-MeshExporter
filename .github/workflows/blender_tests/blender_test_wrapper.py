@@ -8,7 +8,8 @@ if not 0b10 & exitcode:
             content = filehandle.read()
             filehandle.seek(0, 0)
             filehandle.write("local " + content + "\nreturn meshes")
-            print("local " + content + "\nreturn meshes")
+        with open(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests", "test.lua"), "r") as filehandle:
+            print(filehandle.read())
         if os.system("lua5.3 export_validity_test.lua 0"):
             exitcode+=0b100
     if not 0b1000 & exitcode:
@@ -17,6 +18,8 @@ if not 0b10 & exitcode:
             filehandle.seek(0, 0)
             filehandle.write("local " + content + "\nreturn meshes")
             print("local " + content + "\nreturn meshes")
+        with open(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests", "test.lua"), "r") as filehandle:
+            print(filehandle.read())
         if os.system("lua5.3 export_validity_test.lua 1"):
             exitcode+=0b1000
 with open(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests", "test_results.json"), "rt", encoding="utf-8") as filehandle:
