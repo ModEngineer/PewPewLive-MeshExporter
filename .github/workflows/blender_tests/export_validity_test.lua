@@ -15,7 +15,6 @@ end
 
 function cmpr_colors(test, baseline) --  Checks to see if the colors are the same
    for index, color in pairs(test.colors) do
-      print(index)
       local vertex = test.vertexes[index]
       local base_index = find_vertex(baseline.vertexes, vertex) -- Attempts to find the test's vertex in the baseline
 
@@ -56,7 +55,7 @@ function cmpr_segments(test, baseline) -- Checks to see if the segments are the 
          end
       end
       if not validsegment then
-         print("cmpr_segments caused the test fail.")
+         print("cmpr_segments caused the test fail. segment index: ", base_index, "new segment index: ", index)
          return false
       end
       --[[ Commenting this out because it's unnecessarily complex for the purposes of testing 2-vertex segments. The above code is enough. If uncommenting this for whatever reason, comment out the above code
