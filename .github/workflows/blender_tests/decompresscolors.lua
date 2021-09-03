@@ -32,10 +32,10 @@ function decompresscolors(meshlist)
                local groupitem = group[groupitemindex]
                if type(groupitem)=="table" then
                   for i = groupitem[1], groupitem[2] do
-                     mesh.colors[i] = color
+                     mesh.colors[i+1] = color
                   end
                elseif type(groupitem)=="number" then
-                  mesh.colors[groupitem] = color
+                  mesh.colors[groupitem+1] = color
                end
             end
          end
