@@ -12,7 +12,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        blender-version: ["2.79"] #["2.93lts", "2.92", "2.91", "2.90", "2.83lts", "2.82", "2.81", "2.80", "2.79"]
+        blender-version: ["2.93lts", "2.92", "2.91", "2.90", "2.83lts", "2.82", "2.81", "2.80", "2.79"]
     steps:
       - name: Install Blender
         run: |
@@ -20,7 +20,13 @@ jobs:
             sudo apt-get update
             sudo apt-get install libglu1
           fi
+          sudo apt-get install lua5.3
           sudo snap install blender --channel=${{ matrix.blender-version }} --classic
+      - name: Set up Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: '3.9.7'
+          architecture: 'x64'
       #Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - name: Install add-on
@@ -29,4 +35,4 @@ jobs:
           cp -R $GITHUB_WORKSPACE/ppl_meshexport_addon $GITHUB_WORKSPACE/tempmodulefolder/ppl_meshexport_addon
       - name: Test Add-on on version ${{ matrix.blender-version }}
         run: |
-          blender -b -P $GITHUB_WORKSPACE/.github/workflows/testblender.py --python-exit-code 2
+          python $GITHUB_WORKSPACE/.github/workflows/blender_tests/blender_test_wrapper.py
