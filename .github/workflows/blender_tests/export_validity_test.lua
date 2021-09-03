@@ -1,7 +1,13 @@
 function find_vertex(vertices, target)
    for index, vertex in pairs(vertices) do
-      if vertex[1] == target[1] and vertex[2] == target[2] then
-         return index
+      if #vertex==2 and #target==2 then
+         if vertex[1] == target[1] and vertex[2] == target[2] then
+            return index
+         end
+      elseif #vertex==3 and #target==3 then
+         if vertex[1] == target[1] and vertex[2] == target[2] and vertex[3] == target[3] then
+            return index
+         end
       end
    end
    return -1
