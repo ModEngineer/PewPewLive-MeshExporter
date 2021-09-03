@@ -1,11 +1,11 @@
-function find_vertex(vertices, target)
-   for index, vertex in pairs(vertices) do
-      if #vertex==2 and #target==2 then
-         if vertex[1] == target[1] and vertex[2] == target[2] then
+function find_vertex(new_vertices, target_vertex)
+   for index, new_vertex in pairs(new_vertices) do
+      if #new_vertex==2 and #target_vertex==2 then
+         if new_vertex[1] == target_vertex[1] and new_vertex[2] == target_vertex[2] then
             return index
          end
-      elseif #vertex==3 and #target==3 then
-         if vertex[1] == target[1] and vertex[2] == target[2] and vertex[3] == target[3] then
+      elseif #new_vertex==3 and #target_vertex==3 then
+         if new_vertex[1] == target_vertex[1] and new_vertex[2] == target_vertex[2] and new_vertex[3] == target_vertex[3] then
             return index
          end
       end
