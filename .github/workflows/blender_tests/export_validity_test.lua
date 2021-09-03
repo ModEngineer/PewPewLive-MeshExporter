@@ -52,10 +52,11 @@ function cmpr_segments(test, baseline) -- Checks to see if the segments are the 
       for index, segment in pairs(test.segments) do
          if base_segment[1]~=base_segment[2] and segment[1]~=segment[2] and (baseline.vertexes[base_segment[1] + 1]==test.vertexes[segment[1]+1] or baseline.vertexes[base_segment[1] + 1]==test.vertexes[segment[2]+1]) and (baseline.vertexes[base_segment[2] + 1]==test.vertexes[segment[1]+1] or baseline.vertexes[base_segment[2] + 1]==test.vertexes[segment[2]+1]) then
             validsegment = true
+            break
          end
       end
       if not validsegment then
-         print("cmpr_segments caused the test fail. segment index: ", base_index, "new segment index: ", index)
+         print("cmpr_segments caused the test fail. segment index: ", base_index)
          return false
       end
       --[[ Commenting this out because it's unnecessarily complex for the purposes of testing 2-vertex segments. The above code is enough. If uncommenting this for whatever reason, comment out the above code
