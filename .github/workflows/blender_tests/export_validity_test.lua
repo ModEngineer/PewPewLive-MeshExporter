@@ -42,7 +42,7 @@ function cmpr_segments(test, baseline) -- Checks to see if the segments are the 
    for base_index, base_segment in pairs(baseline.segments) do
       local validsegment = false
       for index, segment in pairs(test.segments) do
-         if base_segment[0]~=base_segment[1] and segment[0]~=segment[1] and (baseline.vertexes[base_segment[0] + 1]==test.vertexes[segment[0]+1] or baseline.vertexes[base_segment[0] + 1]==test.vertexes[segment[1]+1]) and (baseline.vertexes[base_segment[1] + 1]==test.vertexes[segment[0]+1] or baseline.vertexes[base_segment[1] + 1]==test.vertexes[segment[1]+1]) then
+         if base_segment[1]~=base_segment[2] and segment[1]~=segment[2] and (baseline.vertexes[base_segment[1] + 1]==test.vertexes[segment[1]+1] or baseline.vertexes[base_segment[1] + 1]==test.vertexes[segment[2]+1]) and (baseline.vertexes[base_segment[2] + 1]==test.vertexes[segment[1]+1] or baseline.vertexes[base_segment[2] + 1]==test.vertexes[segment[2]+1]) then
             validsegment = true
          end
       end
