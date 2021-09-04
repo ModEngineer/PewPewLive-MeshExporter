@@ -7,11 +7,12 @@ for directory in os.listdir(os.path.join(os.environ["GITHUB_WORKSPACE"], "artifa
             jsons[directory] = json.load(filehandle)
 table = "| Test |"
 tablerow2 = "\n| --- |"
-tracebacktable = "| Blender Version | Traceback |\n| --- | --- |"
+tracebacktable = ""
 for version in jsons:
     table+=f" {version} |"
     tablerow2+=" --- |"
-    tracebacktable[version]='```' + ("\n\n--------------------\n\n".join([tb for tb in jsons[version]["tracebacks"] if type(tb)==str])) + '```'
+    tracebacktable+='Tracebacks for Blender version ' + version + ':```py\n' + ("\n\n--------------------\n\n".join([tb for tb in jsons[version]["tracebacks"] if type(tb)==str])) + '```\n'
+tracebacktable = tracebacktable.rstrip("\n")
 table+=tablerow2
 
 for index, test in enumerate(["Add-on registration", "Vertex color operator", "Object export with local coordinates, only selected objects", "Object export without local coordinates, all objects", "Add-on unregistration", "Tests (this will show as an error if the test sotware had an error)"]):
