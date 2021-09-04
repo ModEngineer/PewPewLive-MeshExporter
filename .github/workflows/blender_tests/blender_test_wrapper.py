@@ -23,7 +23,9 @@ if os.path.exists(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workf
     with open(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests", "test_results.json"), "r+", encoding="utf-8") as filehandle:
         content = json.load(filehandle)
         content["exitcode"] = exitcode
+        filehandle.seek(0, 0)
         json.dump(content, filehandle, ensure_ascii=False)
+        filehandle.truncate()
 else:
     with open(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests", "test_results.json"), "w", encoding="utf-8") as filehandle:
         json.dump({"exitcode": 63, "tracebacks": ["Test failed. Traceback unavailable. Please see the logs of the Github Action to diagnose the problem."]}, filehandle, ensure_ascii=False)
