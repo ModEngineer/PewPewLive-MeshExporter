@@ -132,6 +132,7 @@ jobs:
               body: textBody,
               target_commitish: process.env.GITHUB_SHA
             })
+            await new Promise(resolve => setTimeout(resolve, 2500));
             await github.repos.uploadReleaseAsset({
               owner: context.repo.owner,
               repo: context.repo.repo,
