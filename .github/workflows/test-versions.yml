@@ -97,7 +97,7 @@ jobs:
 
             if (startAction=="pull request") {
               github.issues.createComment({
-              issue_number: ${{ github.event.pull_request.number }},
+              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: textBody
