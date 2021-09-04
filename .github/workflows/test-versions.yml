@@ -24,7 +24,7 @@ on:
 
 jobs:
   test:
-    runs-on: ['ubuntu-latest', 'x64']
+    runs-on: 'ubuntu-latest'
     permissions: read-all
     strategy:
       max-parallel: 4
@@ -42,7 +42,6 @@ jobs:
         uses: actions/setup-python@v2.2.2
         with:
           python-version: '3.9.6'
-          architecture: 'x64'
       #Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - name: Install add-on
@@ -61,7 +60,7 @@ jobs:
           path: ${{ github.workspace }}/.github/workflows/blender_tests/test_results.json
           retention-days: 1
   posttest:
-    runs-on: ['ubuntu-latest', 'x64']
+    runs-on: 'ubuntu-latest'
     needs: test
     permissions:
       contents: write
@@ -70,7 +69,6 @@ jobs:
         uses: actions/setup-python@v2.2.2
         with:
           python-version: '3.9.6'
-          architecture: 'x64'
       - uses: actions/checkout@v2
         if: ${{ !( (github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'none') || ( github.event_name == 'pull_request' ) ) }}
       - uses: actions/download-artifact@v2.0.10
