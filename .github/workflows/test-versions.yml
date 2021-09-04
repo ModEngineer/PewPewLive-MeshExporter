@@ -65,12 +65,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2.2.2
         with:
           python-version: '3.9.6'
-      - uses: actions/checkout@v2
-        if: ${{ !( (github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'none') || ( github.event_name == 'pull_request' ) ) }}
       - uses: actions/download-artifact@v2.0.10
         with:
           path: $GITHUB_WORKSPACE/artifacts
