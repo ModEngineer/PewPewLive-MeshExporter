@@ -24,8 +24,7 @@ jobs:
       - name: Prepare for release
         run: |
           python $GITHUB_WORKSPACE/.github/workflows/create_release/prep_release.py
-      - name: Release and update Readme
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'release' }}
+      - name: Release and update README
         uses: actions/github-script@v4
         with:
           script: |
