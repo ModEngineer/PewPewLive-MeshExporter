@@ -1,0 +1,78 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Publish Release
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  make-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: 3.9.6
+      - name: Prepare for release
+        run: |
+          python $GITHUB_WORKSPACE/.github/workflows/create_release/prep_release.py
+      - name: Release and update Readme
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'release' }}
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const fs = require('fs')
+            const path = require('path')
+            const path_to_release_data = path.join(process.env.GITHUB_WORKSPACE, ".github", "workflows", "create_release")
+            let version = fs.readFileSync(path.join(path_to_release_data, "version.txt"), "utf8")
+            let textBody = 'Automated release of the PewPew Live Mesh Exporter Add-on. Test results can most likely be viewed at the comments section of the commit of this release. Test results for the latest release can be found in the repository's README.md'
+            let releaseListResponse = await github.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            })
+            let tagName = "v" + version
+            let tagNames = releaseListResponse.data.map(release => release.tag_name)
+            while (tagNames.includes(tagName)) {
+              if tagName.includes("-r") {
+                let splitTag = tagName.split("-r")
+                tagName = splitTag[0] + "-r" + (parseInt(splitTag[1])+1).toString()
+              } else {
+                tagName+="-r2"
+              }
+            }
+            let releaseResponse = await github.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tagName,
+              name: tagName,
+              body: textBody,
+              target_commitish: exec.exec('git log --pretty=format:"%H" -- ppl_meshexport_addon').split("\n", 1)[0]
+            })
+            await github.repos.uploadReleaseAsset({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: releaseResponse.data.id,
+              name: "ppl_meshexport_addon.zip",
+              data: fs.readFileSync(path.join(path_to_release_data, "ppl_meshexport_addon.zip")),
+              headers: {
+                'content-type': 'application/zip',
+                'content-length': fs.statSync(path.join(path_to_release_data, "ppl_meshexport_addon.zip")).size,
+              }
+            })
+            await github.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: "test-versions.yml",
+              ref: "main",
+              inputs: {
+                action: "update-readme"
+              }
+            })
