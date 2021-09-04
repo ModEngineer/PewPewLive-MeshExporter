@@ -25,4 +25,3 @@ with open(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "
     content = json.load(filehandle)
     content["exitcode"] = exitcode
     json.dump(content, filehandle, ensure_ascii=False)
-sys.exit(exitcode)
