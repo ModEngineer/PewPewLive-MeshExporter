@@ -17,3 +17,7 @@ This add-on losslessly compresses colors it exports, which need to be decompress
 
 ### Found a bug?
 Open an [issue](https://github.com/ModEngineer/PewPewLive-MeshExporter/issues)
+
+### Test Results <!-- The below "tablestart" and "tableend" comments must be kept in their current formats. They are used by Github Actions to automatically update the test results displayed here. -->
+<!--tablestart-->
+<!--tableend-->
