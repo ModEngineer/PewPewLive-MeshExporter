@@ -123,7 +123,7 @@ jobs:
             const path = require('path')
             const path_to_release_data = path.join(process.env.GITHUB_WORKSPACE, ".github", "workflows", "post_test")
             const version = fs.readFileSync(path.join(path_to_release_data, "version.txt"), "utf8")
-            let textBody = `Automated release of the PewPew Live Mesh Exporter Add-on. Test results can be viewed at the comments section of https://github.com/context.repo.owner/context.repo.repo/commit/${process.env.GITHUB_SHA}`
+            let textBody = `Automated release of the PewPew Live Mesh Exporter Add-on. Test results can be viewed at the comments section of https://github.com/${context.repo.owner}/${context.repo.repo}/commit/${exec.exec('git log --pretty=format:"%H" -- ppl_meshexport_addon').split("\n", 1)[0]}`
             let releaseResponse = await github.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
