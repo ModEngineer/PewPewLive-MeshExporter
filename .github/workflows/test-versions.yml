@@ -133,9 +133,6 @@ jobs:
               target_commitish: process.env.GITHUB_SHA
             })
             await github.repos.uploadReleaseAsset({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: releaseResponse.id,
               name: "ppl_meshexport_addon.zip",
               url: releaseResponse.upload_url,
               data: fs.readFileSync(path.join(path_to_release_data, "ppl_meshexport_addon.zip")),
