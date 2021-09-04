@@ -96,14 +96,14 @@ jobs:
             textBody += fs.readFileSync(path.join(path_to_tables, "traceback_table.txt"), "utf8")
 
             if (startAction=="pull request") {
-              github.issues.createComment({
+              await github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: textBody
               })
             } else {
-              github.repos.createCommitComment({
+              await github.repos.createCommitComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 commit_sha: context.sha,
@@ -124,7 +124,7 @@ jobs:
             const path_to_release_data = path.join(process.env.GITHUB_WORKSPACE, ".github", "workflows", "post_test")
             const version = fs.readFileSync(path.join(path_to_release_data, "version.txt"), "utf8")
             let textBody = `Automated release of the PewPew Live Mesh Exporter Add-on. Test results can be viewed at the comments section of https://github.com/context.repo.owner/context.repo.repo/commit/${process.env.GITHUB_SHA}`
-            let releaseResponse = github.repos.createRelease({
+            let releaseResponse = await github.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: "v" + version,
@@ -132,7 +132,7 @@ jobs:
               body: textBody,
               target_commitish: process.env.GITHUB_SHA
             })
-            github.repos.uploadReleaseAsset({
+            await github.repos.uploadReleaseAsset({
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: releaseResponse.id,
