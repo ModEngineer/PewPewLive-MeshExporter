@@ -2,6 +2,9 @@ import os, sys, json
 print("Testing add-on")
 os.system("blender -b -P $GITHUB_WORKSPACE/.github/workflows/blender_tests/blender_tests.py --python-exit-code 63")
 if os.path.exists(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests", "test_results.json")):
+    exitcode = 0
+    with open(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests", "test_results.json"), "r", encoding="utf-8") as filehandle:
+        exitcode = json.load(filehandle)["exitcode"]
     os.chdir(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests"))
     if not 0b100 & exitcode:
         with open(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests", "test.lua"), "r+") as filehandle:
