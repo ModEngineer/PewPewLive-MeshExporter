@@ -132,11 +132,15 @@ jobs:
               body: textBody,
               target_commitish: process.env.GITHUB_SHA
             })
-            await new Promise(resolve => setTimeout(resolve, 2500));
             await github.repos.uploadReleaseAsset({
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: releaseResponse.id,
               name: "ppl_meshexport_addon.zip",
-              data: fs.readFileSync(path.join(path_to_release_data, "ppl_meshexport_addon.zip"))
+              url: releaseResponse.upload_url,
+              data: fs.readFileSync(path.join(path_to_release_data, "ppl_meshexport_addon.zip")),
+              headers: {
+                'content-type': 'application/zip',
+                'content-length': fs.statSync(path.join(path_to_release_data, "ppl_meshexport_addon.zip")).size,
+              }
             })
