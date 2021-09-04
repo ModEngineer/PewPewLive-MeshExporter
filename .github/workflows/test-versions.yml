@@ -18,9 +18,9 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "Post-test Action (update-readme, release, both, none)"
+        description: "Post-test Action (release, none)"
         required: true
-        default: "update-readme"
+        default: "none"
 
 jobs:
   test:
@@ -63,6 +63,8 @@ jobs:
   posttest:
     runs-on: ['ubuntu-latest', 'x64']
     needs: test
+    permissions:
+      contents: write
     steps:
       - name: Set up Python
         uses: actions/setup-python@v2.2.2
@@ -74,7 +76,70 @@ jobs:
       - uses: actions/download-artifact@v2.0.10
         with:
           path: $GITHUB_WORKSPACE/artifacts
-      - name: Generate Table Markdown
-        if: ${{ github.event_name == 'push' || ( github.event_name == 'workflow_dispatch' && (github.event.inputs.action == 'update-readme' || github.event.inputs.action == 'both' ) ) }}
+      - name: Process Results
         run: |
-          
+          python $GITHUB_WORKSPACE/.github/workflows/post_test/generate_table.py
+      - name: Reply to pull request
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const fs = require('fs')
+            const path = require('path')
+
+            const path_to_tables = path.join(process.env.GITHUB_WORKSPACE, ".github", "workflows", "post_test")
+            let startAction = ""
+            if ( context.eventName=="pull_request") {
+              startAction = "pull request"
+            } else {
+              startAction = "commit"
+            }
+            let textBody = `Hi there! Here's some automated test results for your ${startAction}:\n`;
+            textBody += fs.readFileSync(path.join(path_to_tables, "results_table.txt"), "utf8")
+            textBody += "\nAny errors produced during tests will be displayed below:\n"
+            textBody += fs.readFileSync(path.join(path_to_tables, "traceback_table.txt"), "utf8")
+
+            if (startAction=="pull request") {
+              github.issues.createComment({
+              issue_number: ${{ github.event.pull_request.number }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: textBody
+              })
+            } else {
+              github.repos.createCommitComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: context.sha,
+                body: textBody
+              })
+            }
+      - name: Prepare for release
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'release' }}
+        run: |
+          python $GITHUB_WORKSPACE/.github/workflows/post_test/prep_release.py
+      - name: Release
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'release' }}
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const fs = require('fs')
+            const path = require('path')
+            const path_to_release_data = path.join(process.env.GITHUB_WORKSPACE, ".github", "workflows", "post_test")
+            const version = fs.readFileSync(path.join(path_to_release_data, "version.txt"), "utf8")
+            let textBody = `Automated release of the PewPew Live Mesh Exporter Add-on. Test results can be viewed at the comments section of https://github.com/context.repo.owner/context.repo.repo/commit/${process.env.GITHUB_SHA}`
+            let releaseResponse = github.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: "v" + version,
+              name: "v" + version,
+              body: textBody,
+              target_commitish: process.env.GITHUB_SHA
+            })
+            github.repos.uploadReleaseAsset({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: releaseResponse.id,
+              name: "ppl_meshexport_addon.zip"
+              data: fs.readFileSync(path.join(path_to_release_data, "ppl_meshexport_addon.zip"))
+            })
