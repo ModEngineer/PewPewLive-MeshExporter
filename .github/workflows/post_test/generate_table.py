@@ -9,9 +9,10 @@ table = "| Test |"
 tablerow2 = "\n| --- |"
 tracebacktable = ""
 for version in jsons:
-    table+=f" {version} |"
+    cleanVersionString = version.split("v")[-1]
+    table+=f" {cleanVersionString} |"
     tablerow2+=" --- |"
-    tracebacktable+='Tracebacks for Blender version ' + version + ':```py\n' + ("\n\n--------------------\n\n".join([tb for tb in jsons[version]["tracebacks"] if type(tb)==str])) + '```\n'
+    tracebacktable+='Tracebacks for Blender version ' + cleanVersionString + ':\n```py\n' + ("\n\n--------------------\n\n".join([tb for tb in jsons[version]["tracebacks"] if type(tb)==str])) + '```\n'
 tracebacktable = tracebacktable.rstrip("\n")
 table+=tablerow2
 

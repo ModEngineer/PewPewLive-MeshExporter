@@ -75,7 +75,7 @@ jobs:
       - name: Process Results
         run: |
           python $GITHUB_WORKSPACE/.github/workflows/post_test/generate_table.py
-      - name: Reply to pull request
+      - name: Reply to pull request or commit
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
         uses: actions/github-script@v4
         with:
@@ -92,7 +92,7 @@ jobs:
             }
             let textBody = `Hi there! Here's some automated test results for your ${startAction}:\n`;
             textBody += fs.readFileSync(path.join(path_to_tables, "results_table.txt"), "utf8")
-            textBody += "\nAny errors produced during tests will be displayed below:\n"
+            textBody += "\n\nAny errors produced during tests will be displayed below:\n"
             textBody += fs.readFileSync(path.join(path_to_tables, "traceback_table.txt"), "utf8")
 
             if (startAction=="pull request") {
