@@ -136,6 +136,6 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: releaseResponse.id,
-              name: "ppl_meshexport_addon.zip"
+              name: "ppl_meshexport_addon.zip",
               data: fs.readFileSync(path.join(path_to_release_data, "ppl_meshexport_addon.zip"))
             })
