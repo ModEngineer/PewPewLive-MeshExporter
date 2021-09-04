@@ -113,8 +113,6 @@ jobs:
       - name: Prepare for release
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'release' }}
         run: |
-          mkdir $GITHUB_WORKSPACE/tempmodulefolder
-          cp -R $GITHUB_WORKSPACE/ppl_meshexport_addon $GITHUB_WORKSPACE/tempmodulefolder/ppl_meshexport_addon
           python $GITHUB_WORKSPACE/.github/workflows/post_test/prep_release.py
       - name: Release
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'release' }}
