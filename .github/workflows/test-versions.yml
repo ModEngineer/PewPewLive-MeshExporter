@@ -16,6 +16,11 @@ on:
         description: "Post-test Action (update-readme, none)"
         required: true
         default: "none"
+  workflow_run:
+    workflows: ["Publish Release"]
+    branches: [main]
+    types:
+      - completed
 
 jobs:
   test:
@@ -99,7 +104,7 @@ jobs:
               })
             }
       - name: Update README
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'update-readme' }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'update-readme') || github.event_name == 'workflow_run' }}
         run: |
           python $GITHUB_WORKSPACE/.github/workflows/post_test/update_readme.py
           git add README.md
