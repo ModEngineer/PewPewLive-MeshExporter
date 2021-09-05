@@ -6,7 +6,7 @@ with open(os.path.join(os.environ["GITHUB_WORKSPACE"], "README.md"), "r+", encod
         testResultSection+=tablehandle1.read()
     with open(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "post_test", "traceback_table.txt")) as tablehandle2:
         testResultSection+="\n\nAny errors produced during tests will be displayed below:\n" + tablehandle2.read()
-    readme = re.compile("(<!--tablestart-->)(.*)(<!--tableend-->)", re.DOTALL).sub("\\1" + testResultSection + "\\3", readmehandle.read())
+    readme = re.compile("(<!--tablestart-->)(.*)(<!--tableend-->)", re.DOTALL).sub("\\1\n" + testResultSection + "\n\\3", readmehandle.read())
     readmehandle.seek(0, 0)
     readmehandle.write(readme)
     readmehandle.truncate()
