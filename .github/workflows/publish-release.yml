@@ -53,7 +53,8 @@ jobs:
               repo: context.repo.repo,
               path: "ppl_meshexport_addon/",
               per_page: 1
-            }).data[0].sha
+            })
+            commitHash = commitHash.data[0].sha
             console.log(commitHash)
             let releaseResponse = await github.repos.createRelease({
               owner: context.repo.owner,
