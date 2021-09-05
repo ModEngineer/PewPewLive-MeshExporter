@@ -10,12 +10,6 @@ on:
       - main
     paths:
       - "ppl_meshexport_addon/**"
-  workflow_dispatch:
-    inputs:
-      action:
-        description: "Post-test Action (update-readme, none)"
-        required: true
-        default: "none"
   workflow_run:
     workflows: ["Publish Release"]
     branches: [main]
