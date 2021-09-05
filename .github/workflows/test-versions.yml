@@ -102,5 +102,5 @@ jobs:
         run: |
           python $GITHUB_WORKSPACE/.github/workflows/post_test/update_readme.py
           git add README.md
-          git commit -m "Automatically updated README.md with new test results."
+          git commit -m "Automatically updated README.md with new test results." --author "Github Actions <actions@github.com>"
           git push origin main
