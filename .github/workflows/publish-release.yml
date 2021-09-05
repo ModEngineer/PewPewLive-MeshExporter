@@ -75,7 +75,7 @@ jobs:
             await github.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              workflow_id: "test-versions",
+              workflow_id: "test-versions.yml",
               ref: "main",
               inputs: {
                 action: "update-readme"
