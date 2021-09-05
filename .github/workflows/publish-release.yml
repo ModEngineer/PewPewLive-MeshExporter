@@ -48,6 +48,7 @@ jobs:
                 tagName+="-r2"
               }
             }
+            console.log(tagName)
             let commitHash = await github.repos.listCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -55,7 +56,6 @@ jobs:
               per_page: 1
             })
             commitHash = commitHash.data[0].sha
-            console.log(commitHash)
             let releaseResponse = await github.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
