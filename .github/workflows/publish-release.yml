@@ -49,7 +49,7 @@ jobs:
               }
             }
             let commitHash = ''
-            await exec.exec('git log --pretty=format:"%H" -- ppl_meshexport_addon', {listeners: {stdout: (data) => { commitHash += data.toString()}}})
+            await exec.exec('git log --pretty=format:"%H" -- ppl_meshexport_addon | cat', {listeners: {stdout: (data) => { commitHash += data.toString()}}})
             commitHash = commitHash.split("\n", 1)[0]
             let releaseResponse = await github.repos.createRelease({
               owner: context.repo.owner,
