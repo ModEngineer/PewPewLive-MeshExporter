@@ -47,13 +47,16 @@ jobs:
                 tagName+="-r2"
               }
             }
+            let commitHash = ''
+            exec.exec('git log --pretty=format:"%H" -- ppl_meshexport_addon', {listeners: {stdout: (data: Buffer) => { commitHash += data.toString()}}})
+            commitHash = commitHash.split("\n", 1)[0]
             let releaseResponse = await github.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: tagName,
               name: tagName,
               body: textBody,
-              target_commitish: exec.exec('git log --pretty=format:"%H" -- ppl_meshexport_addon').split("\n", 1)[0]
+              target_commitish: commitHash
             })
             await github.repos.uploadReleaseAsset({
               owner: context.repo.owner,
