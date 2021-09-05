@@ -10,11 +10,6 @@ on:
       - main
     paths:
       - "ppl_meshexport_addon/**"
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "ppl_meshexport_addon/**"
   workflow_dispatch:
     inputs:
       action:
@@ -76,8 +71,8 @@ jobs:
       - name: Process Results
         run: |
           python $GITHUB_WORKSPACE/.github/workflows/post_test/generate_table.py
-      - name: Reply to pull request or commit
-        if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+      - name: Reply to commit
+        if: ${{ github.event_name == 'push' }}
         uses: actions/github-script@v4
         with:
           script: |
@@ -85,22 +80,14 @@ jobs:
             const path = require('path')
 
             const path_to_tables = path.join(process.env.GITHUB_WORKSPACE, ".github", "workflows", "post_test")
-            let startAction = ""
-            if ( context.eventName=="pull_request") {
-              startAction = "pull request"
-            } else {
-              startAction = "commit"
-            }
-            let textBody = `Hi there! Here's some automated test results for your ${startAction}:\n`;
+            let textBody = "Hi there! Here's some automated test results for your commit:";
             textBody += fs.readFileSync(path.join(path_to_tables, "results_table.txt"), "utf8")
             textBody += "\n\nAny errors produced during tests will be displayed below:\n"
             textBody += fs.readFileSync(path.join(path_to_tables, "traceback_table.txt"), "utf8")
-
-            if (startAction=="pull request") {
-              await github.issues.createComment({
-              issue_number: context.issue.number,
+            await github.repos.createCommitComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
+              commit_sha: context.sha,
               body: textBody
               })
             } else {
