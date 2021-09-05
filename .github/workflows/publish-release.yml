@@ -38,17 +38,12 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo
             })
-            let tagName = "v" + version
+            let tagName = "v" + version + "-r1"
             let tagNames = releaseListResponse.data.map((release) => release.tag_name)
             while (tagNames.includes(tagName)) {
-              if (tagName.includes("-r")) {
-                let splitTag = tagName.split("-r")
-                tagName = splitTag[0] + "-r" + (parseInt(splitTag[1])+1).toString()
-              } else {
-                tagName+="-r2"
-              }
+              let splitTag = tagName.split("-r")
+              tagName = splitTag[0] + "-r" + (parseInt(splitTag[1])+1).toString()
             }
-            console.log(tagName)
             let commitHash = await github.repos.listCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,
