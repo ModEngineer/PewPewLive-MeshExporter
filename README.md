@@ -19,7 +19,8 @@ This add-on losslessly compresses colors it exports, which need to be decompress
 Open an [issue](https://github.com/ModEngineer/PewPewLive-MeshExporter/issues)
 
 ### Test Results <!-- The below "tablestart" and "tableend" comments must be kept in their current formats. They are used by Github Actions to automatically update the test results displayed here. -->
-<!--tablestart-->| Test | 2.79 | 2.80 | 2.90 |
+<!--tablestart-->
+| Test | 2.79 | 2.80 | 2.90 |
 | --- | --- | --- | --- |
 | Add-on registration | ❌ | ✅ | ✅ |
 | Vertex color operator | ❌ | ✅ | ✅ |
@@ -55,4 +56,5 @@ Tracebacks for Blender version 2.80:
 ```
 Tracebacks for Blender version 2.90:
 ```py
-```<!--tableend-->
+```
+<!--tableend-->
