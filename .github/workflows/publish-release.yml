@@ -51,7 +51,8 @@ jobs:
             let commitHash = ''
             let hashFinder = /[0-9a-f]{40}/gi
             await exec.exec('git log --pretty=format:"%H" -- ppl_meshexport_addon | cat', {listeners: {stdout: (data) => { commitHash += data.toString()}}})
-            console.log(commitHash := hashFinder.exec(commitHash))
+            commitHash = commitHash.split("\n", 1)[0]
+            console.log(commitHash)
             let releaseResponse = await github.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
