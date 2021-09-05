@@ -18,7 +18,7 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "Post-test Action (release, none)"
+        description: "Post-test Action (update-readme, none)"
         required: true
         default: "none"
 
@@ -63,6 +63,7 @@ jobs:
     needs: test
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -110,37 +111,10 @@ jobs:
                 body: textBody
               })
             }
-      - name: Prepare for release
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'release' }}
+      - name: Update README
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'update-readme' }}
         run: |
-          python $GITHUB_WORKSPACE/.github/workflows/post_test/prep_release.py
-      - name: Release
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'release' }}
-        uses: actions/github-script@v4
-        with:
-          script: |
-            const fs = require('fs')
-            const path = require('path')
-            const path_to_release_data = path.join(process.env.GITHUB_WORKSPACE, ".github", "workflows", "post_test")
-            const version = fs.readFileSync(path.join(path_to_release_data, "version.txt"), "utf8")
-            let textBody = `Automated release of the PewPew Live Mesh Exporter Add-on. Test results can be viewed at the comments section of https://github.com/${context.repo.owner}/${context.repo.repo}/commit/${exec.exec('git log --pretty=format:"%H" -- ppl_meshexport_addon').split("\n", 1)[0]}`
-            let releaseResponse = await github.repos.createRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag_name: "v" + version,
-              name: "v" + version,
-              body: textBody,
-              target_commitish: process.env.GITHUB_SHA
-            })
-            await github.repos.uploadReleaseAsset({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: releaseResponse.data.id,
-              name: "ppl_meshexport_addon.zip",
-              url: releaseResponse.data.upload_url,
-              data: fs.readFileSync(path.join(path_to_release_data, "ppl_meshexport_addon.zip")),
-              headers: {
-                'content-type': 'application/zip',
-                'content-length': fs.statSync(path.join(path_to_release_data, "ppl_meshexport_addon.zip")).size,
-              }
-            })
+          python $GITHUB_WORKSPACE/.github/workflows/post_test/update_readme.py
+          git add README.md
+          git commit -m "Automatically updated README.md with new test results."
+          git push origin main
