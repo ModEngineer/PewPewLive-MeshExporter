@@ -1,6 +1,6 @@
 import os, re
 
-with open(os.path.join(os.environ["GITHUB_WORKSPACE"], "README.MD"), "r+", encoding="utf-8") as readmehandle:
+with open(os.path.join(os.environ["GITHUB_WORKSPACE"], "README.md"), "r+", encoding="utf-8") as readmehandle:
     testResultSection = ""
     with open(os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "post_test", "results_table.txt"), "r") as tablehandle1:
         testResultSection+=tablehandle1.read()
