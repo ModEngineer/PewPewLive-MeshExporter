@@ -29,7 +29,6 @@ jobs:
         uses: actions/github-script@v4
         with:
           script: |
-            /*
             const fs = require('fs')
             const path = require('path')
             const path_to_release_data = path.join(process.env.GITHUB_WORKSPACE, ".github", "workflows", "create_release")
@@ -69,15 +68,5 @@ jobs:
               headers: {
                 'content-type': 'application/zip',
                 'content-length': fs.statSync(path.join(path_to_release_data, "ppl_meshexport_addon.zip")).size,
-              }
-            })
-            */
-            await github.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: "test-versions.yml",
-              ref: "main",
-              inputs: {
-                action: "update-readme"
               }
             })
