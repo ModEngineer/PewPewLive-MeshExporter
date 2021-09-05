@@ -77,7 +77,6 @@ jobs:
           script: |
             const fs = require('fs')
             const path = require('path')
-
             const path_to_tables = path.join(process.env.GITHUB_WORKSPACE, ".github", "workflows", "post_test")
             let textBody = "Hi there! Here's some automated test results for your commit:";
             textBody += fs.readFileSync(path.join(path_to_tables, "results_table.txt"), "utf8")
@@ -88,15 +87,7 @@ jobs:
               repo: context.repo.repo,
               commit_sha: context.sha,
               body: textBody
-              })
-            } else {
-              await github.repos.createCommitComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                commit_sha: context.sha,
-                body: textBody
-              })
-            }
+            })
       - name: Update README
         if: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'update-readme') || github.event_name == 'workflow_run' }}
         run: |
