@@ -78,7 +78,7 @@ jobs:
             const fs = require('fs')
             const path = require('path')
             const path_to_tables = path.join(process.env.GITHUB_WORKSPACE, ".github", "workflows", "post_test")
-            let textBody = "Hi there! Here's some automated test results for your commit:";
+            let textBody = "Hi there! Here's some automated test results for your commit:\n";
             textBody += fs.readFileSync(path.join(path_to_tables, "results_table.txt"), "utf8")
             textBody += "\n\nAny errors produced during tests will be displayed below:\n"
             textBody += fs.readFileSync(path.join(path_to_tables, "traceback_table.txt"), "utf8")

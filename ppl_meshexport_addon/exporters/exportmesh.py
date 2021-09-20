@@ -183,8 +183,14 @@ def menu_func_export(self, context):
 
 
 def register():
-    bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
+    if bpy.app.version > (2, 79, 0):
+        bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
+    else:
+        bpy.types.INFO_MT_file_export.append(menu_func_export)
 
 
 def unregister():
-    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
+    if bpy.app.version > (2, 79, 0):
+        bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
+    else:
+        bpy.types.INFO_MT_file_export.remove(menu_func_export)
