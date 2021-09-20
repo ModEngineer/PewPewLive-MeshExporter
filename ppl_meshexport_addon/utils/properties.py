@@ -18,7 +18,7 @@ class PewPewSceneProperties(bpy.types.PropertyGroup):
             update=updateVertexColors,
             default=(1.0, 1.0, 1.0, 1.0))
     else:
-        editmode_vertex_color: bpy.props.FloatVectorProperty(
+        editmode_vertex_color=bpy.props.FloatVectorProperty(
             name="Color",
             subtype="COLOR",
             min=0,
