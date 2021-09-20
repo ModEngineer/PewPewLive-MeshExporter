@@ -25,7 +25,7 @@ class PewPewSceneProperties(bpy.types.PropertyGroup):
             max=1,
             step=1,
             precision=6,
-            size=4,
+            size=3,
             update=updateVertexColors,
             default=(1.0, 1.0, 1.0))
 
