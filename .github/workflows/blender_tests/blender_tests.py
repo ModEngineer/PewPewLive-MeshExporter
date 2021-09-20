@@ -44,7 +44,7 @@ try:
         bpy.context.view_layer.objects.active = currentobj
     else:
         currentobj.select = True
-        bpy.context.scene.object.active = currentobj
+        bpy.context.scene.objects.active = currentobj
     bm = bmesh.new()
     bm.from_mesh(currentobj.data)
     seamVertexCoords = ([1, 1, 1], [-1, 1, 1], [-1, -1, 1])
