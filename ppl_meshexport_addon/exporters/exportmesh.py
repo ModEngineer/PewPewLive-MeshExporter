@@ -171,7 +171,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
             if bpy.app.version > (2, 79, 0):
                 return obj.visible_get()
             else:
-                return obj.is_visible()
+                return obj.is_visible(bpy.context.scene)
 
         out = []
         for object in context.scene.objects:
