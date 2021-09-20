@@ -101,13 +101,13 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
 
     filename_ext = ".lua"
 
-    filter_glob: bpy.props.StringProperty(
+    filter_glob=StringProperty(
         default="*.lua",
         options={"HIDDEN"},
         maxlen=511,
     )
 
-    max_decimal_digits: IntProperty(
+    max_decimal_digits=IntProperty(
         name="Maximum Decimal Digits",
         description="Maximum amount of decimal digits in exported coordinates",
         default=3,
@@ -115,7 +115,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         soft_min=1,
     )
 
-    multiplier: FloatProperty(
+    multiplier=FloatProperty(
         name="Coordinate Scale Multiplier",
         description=
         "All coordinates are multiplied by this number. Set this to 32 for 1 unit to equal the width of the Alpha ship model in-game.",
@@ -124,32 +124,32 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         soft_min=0.1,
     )
 
-    only_selected: BoolProperty(
+    only_selected=BoolProperty(
         name="Only Export Selected Objects",
         description="Only export selected objects",
         default=False,
     )
 
-    use_local: BoolProperty(
+    use_local=BoolProperty(
         name="Use Local Coordinates",
         description=
         "Use local coordinates instead of global coordinates when exporting",
         default=False,
     )
 
-    exclude_seamed_edges: BoolProperty(
+    exclude_seamed_edges=BoolProperty(
         name="Exclude Seams",
         description="Stop edges marked as seams from being exported",
         default=False,
     )
 
-    export_color: BoolProperty(
+    export_color=BoolProperty(
         name="Export Color",
         description="Export vertex colors",
         default=False,
     )
 
-    color_decompressor_location: StringProperty(
+    color_decompressor_location=StringProperty(
         name="Color Decompressor Location",
         description=
         "The location of decompresscolors.lua, including \"/dynamic/\" (without quotes)",
