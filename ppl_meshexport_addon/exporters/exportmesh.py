@@ -172,12 +172,16 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                 return obj.visible_get()
             else:
                 return obj.is_visible(bpy.context.scene)
-
+        def object_is_selected(obj):
+            if bpy.app.version > (2, 79, 0):
+                return obj.select_get()
+            else:
+                return obj.select
         out = []
         for object in context.scene.objects:
             if object.type == "MESH" and object_is_visible(object) and (
                 (not self.only_selected) or
-                (self.only_selected and object.select_get())):
+                (self.only_selected and object_is_selected(object))):
                 out.append(
                     serializeMesh(object, self.use_local, self.export_color,
                                   self.exclude_seamed_edges,
