@@ -7,8 +7,7 @@ A [Blender](https://www.blender.org/) 2.79+ add-on for converting scenes into [P
 3. Go to the Add-ons tab
 4. Click "Install..."
 5. Select the .zip you downloaded and click "Install Add-on"
-6. Tick the checkbox next to "Import-Export: PewPew Live Mesh Exporter"
-6.1. If you are using a Blender version below 2.90, you may get a warning about the add-on being for a future version. While the current version of Blender will always be the priority, I will try to maintain backwards compatibility through one way or another.
+6. Tick the checkbox next to "Import-Export: PewPew Live Mesh Exporter." If you are using a Blender version below 2.90, you may get a warning about the add-on being for a future version. While the current version of Blender will always be the priority, I will try to maintain backwards compatibility through one way or another.
 
 ### What is `decompresscolors.lua`?
 This add-on losslessly compresses colors it exports, which need to be decompressed. `decompresscolors.lua` is the script used to decompress the exported colors and must be included with your PewPew Live level. It can be found [here](https://github.com/ModEngineer/PewPewLive-Code-Snippets/blob/main/mesh_utils/decompresscolors.lua).
