@@ -6,16 +6,28 @@ from ..newgui.vertexcolorimprovement import updateVertexColors
 
 class PewPewSceneProperties(bpy.types.PropertyGroup):
     #newgui properties:
-    editmode_vertex_color=bpy.props.FloatVectorProperty(
-        name="Color",
-        subtype="COLOR",
-        min=0,
-        max=1,
-        step=1,
-        precision=6,
-        size=4,
-        update=updateVertexColors,
-        default=(1.0, 1.0, 1.0, 1.0))
+    if bpy.app.version > (2, 79, 0):
+        editmode_vertex_color=bpy.props.FloatVectorProperty(
+            name="Color",
+            subtype="COLOR",
+            min=0,
+            max=1,
+            step=1,
+            precision=6,
+            size=4,
+            update=updateVertexColors,
+            default=(1.0, 1.0, 1.0, 1.0))
+    else:
+        editmode_vertex_color: bpy.props.FloatVectorProperty(
+            name="Color",
+            subtype="COLOR",
+            min=0,
+            max=1,
+            step=1,
+            precision=6,
+            size=4,
+            update=updateVertexColors,
+            default=(1.0, 1.0, 1.0))
 
 
 class PewPewMeshExporterPreferences(bpy.types.AddonPreferences):

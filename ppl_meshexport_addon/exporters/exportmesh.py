@@ -21,7 +21,10 @@ def serializeMesh(object, use_local, export_color, exclude_seamed_edges,
     out = {}
     out[stringKey("vertexes")] = []
     out[stringKey("segments")] = []
-    mesh = object.to_mesh()
+    if bpy.app.version > (2, 79, 0):
+        mesh = object.to_mesh()
+    else:
+        mesh = object.to_mesh(bpy.context.scene, True, ("RENDER"))
     if not use_local:
         mesh.transform(object.matrix_world)
     bm = bmesh.new()
@@ -49,11 +52,18 @@ def serializeMesh(object, use_local, export_color, exclude_seamed_edges,
         if export_color and bm.loops.layers.color.active:
             #Face vertices are ignored. I don't have the time to support multiple colors per vertex.
             vertexcolor = vertex.link_loops[0][bm.loops.layers.color.active]
-            colorhex = hexint(
-                (clamp(round(vertexcolor[0] * 255), 0, 255) << 24) +
-                (clamp(round(vertexcolor[1] * 255), 0, 255) << 16) +
-                (clamp(round(vertexcolor[2] * 255), 0, 255) << 8) +
-                clamp(round(vertexcolor[3] * 255), 0, 255))
+            colorhex = None
+            if bpy.app.version > (2, 79, 0):
+                colorhex = hexint(
+                    (clamp(round(vertexcolor[0] * 255), 0, 255) << 24) +
+                    (clamp(round(vertexcolor[1] * 255), 0, 255) << 16) +
+                    (clamp(round(vertexcolor[2] * 255), 0, 255) << 8) +
+                    clamp(round(vertexcolor[3] * 255), 0, 255))
+            else:
+                colorhex = hexint(
+                    (clamp(round(vertexcolor[0] * 255), 0, 255) << 24) +
+                    (clamp(round(vertexcolor[1] * 255), 0, 255) << 16) +
+                    (clamp(round(vertexcolor[2] * 255), 0, 255) << 8) + 0xff)
             out[stringKey("colors")][
                 str(colorhex)] = out[stringKey("colors")].get(
                     str(colorhex),
@@ -101,13 +111,13 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
 
     filename_ext = ".lua"
 
-    filter_glob=StringProperty(
+    filter_glob = StringProperty(
         default="*.lua",
         options={"HIDDEN"},
         maxlen=511,
     )
 
-    max_decimal_digits=IntProperty(
+    max_decimal_digits = IntProperty(
         name="Maximum Decimal Digits",
         description="Maximum amount of decimal digits in exported coordinates",
         default=3,
@@ -115,7 +125,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         soft_min=1,
     )
 
-    multiplier=FloatProperty(
+    multiplier = FloatProperty(
         name="Coordinate Scale Multiplier",
         description=
         "All coordinates are multiplied by this number. Set this to 32 for 1 unit to equal the width of the Alpha ship model in-game.",
@@ -124,32 +134,32 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         soft_min=0.1,
     )
 
-    only_selected=BoolProperty(
+    only_selected = BoolProperty(
         name="Only Export Selected Objects",
         description="Only export selected objects",
         default=False,
     )
 
-    use_local=BoolProperty(
+    use_local = BoolProperty(
         name="Use Local Coordinates",
         description=
         "Use local coordinates instead of global coordinates when exporting",
         default=False,
     )
 
-    exclude_seamed_edges=BoolProperty(
+    exclude_seamed_edges = BoolProperty(
         name="Exclude Seams",
         description="Stop edges marked as seams from being exported",
         default=False,
     )
 
-    export_color=BoolProperty(
+    export_color = BoolProperty(
         name="Export Color",
         description="Export vertex colors",
         default=False,
     )
 
-    color_decompressor_location=StringProperty(
+    color_decompressor_location = StringProperty(
         name="Color Decompressor Location",
         description=
         "The location of decompresscolors.lua, including \"/dynamic/\" (without quotes)",
@@ -157,9 +167,15 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
     )
 
     def execute(self, context):
+        def object_is_visible(obj):
+            if bpy.app.version > (2, 79, 0):
+                return obj.visible_get()
+            else:
+                return obj.is_visible()
+
         out = []
         for object in context.scene.objects:
-            if object.type == "MESH" and object.visible_get() and (
+            if object.type == "MESH" and object_is_visible(object) and (
                 (not self.only_selected) or
                 (self.only_selected and object.select_get())):
                 out.append(
