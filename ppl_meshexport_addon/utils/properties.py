@@ -42,9 +42,9 @@ class PewPewMeshExporterPreferences(bpy.types.AddonPreferences):
 
 
 def register():
-    bpy.types.Scene.pewpew_sceneproperties = bpy.props.PointerProperty(
+    bpy.types.Scene.pewpew = bpy.props.PointerProperty(
         type=PewPewSceneProperties)
 
 
 def unregister():
-    del bpy.types.Scene.pewpew_sceneproperties
+    del bpy.types.Scene.pewpew

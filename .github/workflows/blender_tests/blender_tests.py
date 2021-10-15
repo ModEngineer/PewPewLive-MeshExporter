@@ -59,9 +59,9 @@ try:
     #Test vertex color operator
     try:
         if bpy.app.version > (2, 79, 0):
-            bpy.context.scene.pewpew_sceneproperties.editmode_vertex_color = (0.5, 0.5, 1.0, 1.0)
+            bpy.context.scene.pewpew.editmode_vertex_color = (0.5, 0.5, 1.0, 1.0)
         else:
-            bpy.context.scene.pewpew_sceneproperties.editmode_vertex_color = (0.5, 0.5, 1.0)
+            bpy.context.scene.pewpew.editmode_vertex_color = (0.5, 0.5, 1.0)
         bpy.ops.mesh.select_all(action='SELECT')
         bpy.ops.mesh.set_vertex_colors()
         bpy.ops.mesh.select_all(action='DESELECT')
@@ -71,9 +71,9 @@ try:
                 vert.select = True
         bpy.ops.object.mode_set(mode='EDIT')
         if bpy.app.version > (2, 79, 0):
-            bpy.context.scene.pewpew_sceneproperties.editmode_vertex_color = (1, 0.5, 0.5, 1.0)
+            bpy.context.scene.pewpew.editmode_vertex_color = (1, 0.5, 0.5, 1.0)
         else:
-            bpy.context.scene.pewpew_sceneproperties.editmode_vertex_color = (1, 0.5, 0.5)
+            bpy.context.scene.pewpew.editmode_vertex_color = (1, 0.5, 0.5)
         bpy.ops.mesh.set_vertex_colors()
         bpy.ops.mesh.select_all(action='DESELECT')
         test_results["tracebacks"].append(None)

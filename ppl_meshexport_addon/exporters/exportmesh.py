@@ -15,18 +15,18 @@ def correctIndex(exclusions, index):
         1 for excludedIndex in exclusions if excludedIndex < index)
 
 
-def serializeMesh(object, use_local, export_color, exclude_seamed_edges,
+def serializeMesh(obj, use_local, export_color, exclude_seamed_edges,
                   max_decimal_digits, multiplier):
     # Vertex Processing and init
     out = {}
     out[stringKey("vertexes")] = []
     out[stringKey("segments")] = []
     if bpy.app.version > (2, 79, 0):
-        mesh = object.to_mesh()
+        mesh = obj.to_mesh()
     else:
-        mesh = object.to_mesh(bpy.context.scene, True, ("RENDER"))
+        mesh = obj.to_mesh(bpy.context.scene, True, ("RENDER"))
     if not use_local:
-        mesh.transform(object.matrix_world)
+        mesh.transform(obj.matrix_world)
     bm = bmesh.new()
     bm.from_mesh(mesh)
     if export_color and bm.loops.layers.color.active:
@@ -178,12 +178,12 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
             else:
                 return obj.select
         out = []
-        for object in context.scene.objects:
-            if object.type == "MESH" and object_is_visible(object) and (
+        for obj in context.scene.objects:
+            if obj.type == "MESH" and object_is_visible(obj) and (
                 (not self.only_selected) or
-                (self.only_selected and object_is_selected(object))):
+                (self.only_selected and object_is_selected(obj))):
                 out.append(
-                    serializeMesh(object, self.use_local, self.export_color,
+                    serializeMesh(obj, self.use_local, self.export_color,
                                   self.exclude_seamed_edges,
                                   self.max_decimal_digits, self.multiplier))
 
