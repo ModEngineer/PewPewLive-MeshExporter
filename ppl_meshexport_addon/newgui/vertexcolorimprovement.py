@@ -21,7 +21,8 @@ class VertexColorOperator(bpy.types.Operator):
         for vertex in vertices:
             if vertex.select and not vertex.hide:
                 for loops in vertex.link_loops:
-                    loops[colorloop] = context.scene.pewpew.editmode_vertex_color
+                    loops[
+                        colorloop] = context.scene.pewpew.editmode_vertex_color
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.mode_set(mode='EDIT')
         return {"FINISHED"}
