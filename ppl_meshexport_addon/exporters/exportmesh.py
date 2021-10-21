@@ -22,7 +22,7 @@ def serializeMesh(obj, use_local, export_color, exclude_seamed_edges,
     if bpy.app.version > (2, 79, 0):
         mesh = obj.to_mesh()
     else:
-        mesh = obj.to_mesh(bpy.context.scene, False)
+        mesh = obj.to_mesh(bpy.context.scene, False, {"PREVIEW"})
     if not use_local:
         mesh.transform(obj.matrix_world)
     bm = bmesh.new()

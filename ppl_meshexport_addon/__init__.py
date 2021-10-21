@@ -3,7 +3,7 @@ bl_info = {
     "author": "ModEngineer",
     "blender": (2, 90, 0),
     "description": "A mesh exporter for PewPew Live",
-    "version": (0, 3, 0), #Version formatting here must not be changed! The test-versions Github Action relies on this to name releases.
+    "version": (0, 3, 1), #Version formatting here must not be changed! The test-versions Github Action relies on this to name releases.
     "tracker_url":
     "https://www.github.com/ModEngineer/PewPewLive-MeshExporter/issues",
     "category": "Import-Export"
