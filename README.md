@@ -12,6 +12,12 @@ A [Blender](https://www.blender.org/) 2.79+ add-on for converting scenes into [P
 ### What is `decompresscolors.lua`?
 This add-on losslessly compresses colors it exports, which need to be decompressed. `decompresscolors.lua` is the script used to decompress the exported colors and must be included with your PewPew Live level. It can be found [here](https://github.com/ModEngineer/PewPewLive-Code-Snippets/blob/main/mesh_utils/decompresscolors.lua).
 
+### What are segments?
+Segments are PewPew Live's version of edges. By default, each edge is exported to its own segment, but the segments panel (which should be near the vertex groups panel) can be used to merge multiple edges into a single segment.
+
+### What are these vertex groups created by the segments?
+These are used to keep track of edges. This is done because properties cannot be applied to vertices, edges, or faces and because their indices are unstable. Unless you know what you are doing, __DO NOT__ create or edit any vertex groups with a name such as `pewpew_segment_SegmentNameHere_vgroup`.
+
 ### Found a bug?
 Open an [issue](https://github.com/ModEngineer/PewPewLive-MeshExporter/issues)
 

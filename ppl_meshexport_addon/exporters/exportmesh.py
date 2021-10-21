@@ -1,12 +1,10 @@
-import bpy
-import bpy_extras
+import re, bpy, bpy_extras, bmesh, itertools
 from bpy.props import BoolProperty, IntProperty, FloatProperty, StringProperty
-import bmesh
 from copy import deepcopy
 from ..utils.common import cleanRound, clamp
 from ..lua.luadataexport import toLua, stringKey
 from ..utils.datatypes import hexint
-import itertools
+from ..modules import pygraphutils
 
 
 def correctIndex(exclusions, index):
@@ -16,7 +14,7 @@ def correctIndex(exclusions, index):
 
 
 def serializeMesh(obj, use_local, export_color, exclude_seamed_edges,
-                  max_decimal_digits, multiplier):
+                  max_decimal_digits, multiplier, use_segments):
     # Vertex Processing and init
     out = {}
     out[stringKey("vertexes")] = []
@@ -24,7 +22,7 @@ def serializeMesh(obj, use_local, export_color, exclude_seamed_edges,
     if bpy.app.version > (2, 79, 0):
         mesh = obj.to_mesh()
     else:
-        mesh = obj.to_mesh(bpy.context.scene, True, ("RENDER"))
+        mesh = obj.to_mesh(bpy.context.scene, False)
     if not use_local:
         mesh.transform(obj.matrix_world)
     bm = bmesh.new()
@@ -68,12 +66,44 @@ def serializeMesh(obj, use_local, export_color, exclude_seamed_edges,
                 str(colorhex)] = out[stringKey("colors")].get(
                     str(colorhex),
                     []) + [correctIndex(excludedVertexIndices, vertex.index)]
-    for edge in bm.edges:
+    # Multi-edge segment processor
+    remainingEdges = set(bm.edges)
+    if obj.pewpew.segments and use_segments:
+        deformLayer = bm.verts.layers.deform.verify()
+        for segment in obj.pewpew.segments:
+            if segment.is_eulerian:
+                currentSegmentGraph = {}
+                segmentVGroupIndices = [
+                    group.index for group in obj.vertex_groups
+                    if segment.vgroup_base_name in group.name
+                ]
+                for edge in bm.edges:
+                    assert not (
+                        exclude_seamed_edges and edge.seam
+                    ), "An edge in a segment must not be marked as a seam if excluding seams."
+                    if any(vGroupIndex in dict(edge.verts[0][deformLayer]).keys()
+                           for vGroupIndex in dict(edge.verts[1][deformLayer]).keys()
+                           if vGroupIndex in segmentVGroupIndices):
+                        remainingEdges.remove(edge)
+                        pygraphutils.add_edge(
+                            correctIndex(excludedVertexIndices,
+                                         edge.verts[0].index),
+                            correctIndex(excludedVertexIndices,
+                                         edge.verts[1].index),
+                            currentSegmentGraph)
+                pygraphutils.validate_graph(
+                    currentSegmentGraph).raise_exception()
+                fleuryResult = pygraphutils.fleury(currentSegmentGraph)
+                if fleuryResult:
+                    out[stringKey("segments")].append(fleuryResult)
+    # Single-edge segment processor
+    for edge in remainingEdges:
         if not (exclude_seamed_edges and edge.seam):
             out[stringKey("segments")].append([
                 correctIndex(excludedVertexIndices, edge.verts[0].index),
                 correctIndex(excludedVertexIndices, edge.verts[1].index)
             ])
+
     # The following code is the color compressor. I have no clue how it works, but it works.
     if export_color and bm.loops.layers.color.active:
         for color in out[stringKey("colors")]:
@@ -105,7 +135,7 @@ def serializeMesh(obj, use_local, export_color, exclude_seamed_edges,
 
 
 class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
-    """Save a PewPew Live mesh from scene. Vertex groups are joined into single segments spanning multiple vertices. Only visible objects can be exported."""
+    """Save a PewPew Live mesh from scene. Only visible objects can be exported."""
     bl_idname = "pewpew_live_meshexporter.exportmeshfromscene"
     bl_label = "PewPew Live (.lua)"
 
@@ -166,17 +196,30 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         default="/dynamic/utils/decompresscolors.lua",
     )
 
+    use_segments = BoolProperty(
+        name="Use Segments",
+        description=
+        "Instead of exporting each edge as its own segment, use user-specified segments",
+        default=True)
+
+    use_fixedpoint = BoolProperty(
+        name="Use FixedPoint",
+        description="Use FixedPoint instead of floating point numbers",
+        default=False)
+
     def execute(self, context):
         def object_is_visible(obj):
             if bpy.app.version > (2, 79, 0):
                 return obj.visible_get()
             else:
                 return obj.is_visible(bpy.context.scene)
+
         def object_is_selected(obj):
             if bpy.app.version > (2, 79, 0):
                 return obj.select_get()
             else:
                 return obj.select
+
         out = []
         for obj in context.scene.objects:
             if obj.type == "MESH" and object_is_visible(obj) and (
@@ -185,11 +228,12 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                 out.append(
                     serializeMesh(obj, self.use_local, self.export_color,
                                   self.exclude_seamed_edges,
-                                  self.max_decimal_digits, self.multiplier))
+                                  self.max_decimal_digits, self.multiplier,
+                                  self.use_segments))
 
         if self.export_color:
             serialized = "meshes=require(\"" + self.color_decompressor_location + "\")(" + toLua(
-                out, True) + ")"
+                out, not self.use_fixedpoint) + ")"
         else:
             serialized = toLua(out, True, "meshes")
         f = open(self.filepath, 'w', encoding='utf-8')
