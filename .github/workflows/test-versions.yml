@@ -10,6 +10,7 @@ on:
       - main
     paths:
       - "ppl_meshexport_addon/**"
+      - ".github/workflows/**"
   workflow_run:
     workflows: ["Publish Release"]
     branches: [main]
