@@ -8,7 +8,7 @@ for directory in os.listdir(os.path.join(os.environ["GITHUB_WORKSPACE"], "artifa
 table = "| Test |"
 tablerow2 = "\n| --- |"
 tracebacktable = ""
-for version in jsons:
+for version in sorted(jsons.keys(), reverse=True):
     cleanVersionString = version.split("v")[-1]
     table+=f" {cleanVersionString} |"
     tablerow2+=" --- |"
