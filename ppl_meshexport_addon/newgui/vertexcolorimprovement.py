@@ -17,7 +17,7 @@ class VertexColorOperator(bpy.types.Operator):
 
         bm = bmesh.from_edit_mesh(context.object.data)
         vertices = bm.verts
-        colorloop = bm.loops.layers.color.active
+        colorloop = bm.loops.layers.color.verify()
         for vertex in vertices:
             if vertex.select and not vertex.hide:
                 for loops in vertex.link_loops:
