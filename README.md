@@ -27,8 +27,8 @@ Open an [issue](https://github.com/ModEngineer/PewPewLive-MeshExporter/issues)
 | --- | --- | --- | --- |
 | Add-on registration | ✅ | ✅ | ✅ |
 | Vertex color operator | ✅ | ✅ | ✅ |
-| Object export with local coordinates, only selected objects | ✅ | ✅ | ❌ |
-| Object export without local coordinates, all objects | ✅ | ✅ | ❌ |
+| Object export with local coordinates, only selected objects | ✅ | ✅ | ✅ |
+| Object export without local coordinates, all objects | ✅ | ✅ | ✅ |
 | Add-on unregistration | ✅ | ✅ | ✅ |
 | Tests (this will show as an error if the test sotware had an error) | ✅ | ✅ | ✅ |
 
@@ -41,39 +41,5 @@ Tracebacks for Blender version 2.80:
 ```
 Tracebacks for Blender version 2.79:
 ```py
-Traceback (most recent call last):
-  File "/home/runner/work/PewPewLive-MeshExporter/PewPewLive-MeshExporter/.github/workflows/blender_tests/blender_tests.py", line 92, in <module>
-    bpy.ops.pewpew_live_meshexporter.exportmeshfromscene(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests", "test.lua"), max_decimal_digits=3, multiplier=5, only_selected=True, use_local=True, exclude_seamed_edges=True, export_color=True, color_decompressor_location="decompresscolors", use_segments=False, use_fixedpoint=False)
-  File "/snap/blender/20/2.79/scripts/modules/bpy/ops.py", line 189, in __call__
-    ret = op_call(self.idname_py(), None, kw)
-RuntimeError: Error: Traceback (most recent call last):
-  File "/home/runner/work/PewPewLive-MeshExporter/PewPewLive-MeshExporter/tempmodulefolder/ppl_meshexport_addon/exporters/exportmesh.py", line 232, in execute
-    self.use_segments))
-  File "/home/runner/work/PewPewLive-MeshExporter/PewPewLive-MeshExporter/tempmodulefolder/ppl_meshexport_addon/exporters/exportmesh.py", line 25, in serializeMesh
-    mesh = obj.to_mesh(bpy.context.scene, False)
-TypeError: Object.to_mesh(): required parameter "settings" not specified
-
-location: /snap/blender/20/2.79/scripts/modules/bpy/ops.py:189
-
-
-
-
---------------------
-
-Traceback (most recent call last):
-  File "/home/runner/work/PewPewLive-MeshExporter/PewPewLive-MeshExporter/.github/workflows/blender_tests/blender_tests.py", line 100, in <module>
-    bpy.ops.pewpew_live_meshexporter.exportmeshfromscene(filepath=os.path.join(os.environ["GITHUB_WORKSPACE"], ".github", "workflows", "blender_tests",  "test2.lua"), max_decimal_digits=3, multiplier=5, only_selected=False, use_local=False, exclude_seamed_edges=True, export_color=True, color_decompressor_location="decompresscolors", use_segments=False, use_fixedpoint=False)
-  File "/snap/blender/20/2.79/scripts/modules/bpy/ops.py", line 189, in __call__
-    ret = op_call(self.idname_py(), None, kw)
-RuntimeError: Error: Traceback (most recent call last):
-  File "/home/runner/work/PewPewLive-MeshExporter/PewPewLive-MeshExporter/tempmodulefolder/ppl_meshexport_addon/exporters/exportmesh.py", line 232, in execute
-    self.use_segments))
-  File "/home/runner/work/PewPewLive-MeshExporter/PewPewLive-MeshExporter/tempmodulefolder/ppl_meshexport_addon/exporters/exportmesh.py", line 25, in serializeMesh
-    mesh = obj.to_mesh(bpy.context.scene, False)
-TypeError: Object.to_mesh(): required parameter "settings" not specified
-
-location: /snap/blender/20/2.79/scripts/modules/bpy/ops.py:189
-
-
 ```
 <!--tableend-->
