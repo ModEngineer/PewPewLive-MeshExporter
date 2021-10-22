@@ -332,6 +332,7 @@ class DATA_PT_segments(bpy.types.Panel):
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
     bl_options = {"DEFAULT_CLOSED"}
+    bl_context = "data"
 
     @classmethod
     def poll(cls, context):
