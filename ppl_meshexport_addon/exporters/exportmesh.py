@@ -78,12 +78,13 @@ def serializeMesh(obj, use_local, export_color, exclude_seamed_edges,
                     if segment.vgroup_base_name in group.name
                 ]
                 for edge in bm.edges:
-                    assert not (
-                        exclude_seamed_edges and edge.seam
-                    ), "An edge in a segment must not be marked as a seam if excluding seams."
-                    if any(vGroupIndex in dict(edge.verts[0][deformLayer]).keys()
-                           for vGroupIndex in dict(edge.verts[1][deformLayer]).keys()
+                    if any(vGroupIndex in dict(
+                            edge.verts[0][deformLayer]).keys() for vGroupIndex
+                           in dict(edge.verts[1][deformLayer]).keys()
                            if vGroupIndex in segmentVGroupIndices):
+                        assert not (
+                            exclude_seamed_edges and edge.seam
+                        ), "An edge in a segment must not be marked as a seam if excluding seams."
                         remainingEdges.remove(edge)
                         pygraphutils.add_edge(
                             correctIndex(excludedVertexIndices,
