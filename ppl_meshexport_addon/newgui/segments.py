@@ -286,7 +286,10 @@ class SegmentSelectOperator(bpy.types.Operator):
         bpy.ops.object.mode_set(mode="OBJECT")
         vGroupNameBase = context.object.pewpew.segments[
             context.object.pewpew.active_segment_index].vgroup_base_name
-        vertsToDeselect = set()
+        if self.mode:
+            selectedEdges = set(edge for edge in context.object.data.edges if edge.select)
+        else:
+            deselectedEdges = set()
         for edge in context.object.data.edges:
             firstVertGroups = [
                 groupElement.group for groupElement in
@@ -302,13 +305,19 @@ class SegmentSelectOperator(bpy.types.Operator):
             ]
             if any(group in secondVertGroups for group in firstVertGroups):
                 edge.select = self.mode
-                if not self.mode:
-                    vertsToDeselect.add(edge.vertices[0])
-                    vertsToDeselect.add(edge.vertices[1])
-        if not self.mode:
-            for poly in context.object.data.polygons:
-                if any(vertex in poly.vertices for vertex in vertsToDeselect):
-                    poly.select = False
+                if self.mode:
+                    selectedEdges.add(edge)
+                else:
+                    deselectedEdges.add(edge)
+        if self.mode:
+            selectedEdges = set((edge.vertices[0], edge.vertices[1]) for edge in selectedEdges)
+        else:
+            deselectedEdges = set((edge.vertices[0], edge.vertices[1]) for edge in deselectedEdges)
+        for poly in context.object.data.polygons:
+            if self.mode and all( (polyEdge in selectedEdges or polyEdge[::-1] in selectedEdges) for polyEdge in poly.edge_keys):
+                poly.select = True
+            elif (not self.mode) and any( (polyEdge in deselectedEdges or polyEdge[::-1] in deselectedEdges) for polyEdge in poly.edge_keys):
+                poly.select = False
         bpy.ops.object.mode_set(mode="EDIT")
         return {"FINISHED"}
 
