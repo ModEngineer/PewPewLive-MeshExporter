@@ -142,19 +142,30 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
 
     filename_ext = ".lua"
 
-    filter_glob = StringProperty(
-        default="*.lua",
-        options={"HIDDEN"},
-        maxlen=511,
-    )
+    filter_glob = StringProperty(default="*.lua",
+                                 options={"HIDDEN"},
+                                 maxlen=511)
+
+    only_selected = BoolProperty(name="Only Export Selected Objects",
+                                 description="Only export selected objects",
+                                 default=False)
+
+    export_color = BoolProperty(name="Export Color",
+                                description="Export vertex colors",
+                                default=False)
+
+    color_decompressor_location = StringProperty(
+        name="Color Decompressor Location",
+        description=
+        "The location of decompresscolors.lua, including \"/dynamic/\" (without quotes)",
+        default="/dynamic/utils/decompresscolors.lua")
 
     max_decimal_digits = IntProperty(
         name="Maximum Decimal Digits",
         description="Maximum amount of decimal digits in exported coordinates",
         default=3,
         min=0,
-        soft_min=1,
-    )
+        soft_min=1)
 
     multiplier = FloatProperty(
         name="Coordinate Scale Multiplier",
@@ -162,40 +173,13 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         "All coordinates are multiplied by this number. Set this to 32 for 1 unit to equal the width of the Alpha ship model in-game.",
         default=1.0,
         min=0.0,
-        soft_min=0.1,
-    )
-
-    only_selected = BoolProperty(
-        name="Only Export Selected Objects",
-        description="Only export selected objects",
-        default=False,
-    )
+        soft_min=0.1)
 
     use_local = BoolProperty(
         name="Use Local Coordinates",
         description=
         "Use local coordinates instead of global coordinates when exporting",
-        default=False,
-    )
-
-    exclude_seamed_edges = BoolProperty(
-        name="Exclude Seams",
-        description="Stop edges marked as seams from being exported",
-        default=False,
-    )
-
-    export_color = BoolProperty(
-        name="Export Color",
-        description="Export vertex colors",
-        default=False,
-    )
-
-    color_decompressor_location = StringProperty(
-        name="Color Decompressor Location",
-        description=
-        "The location of decompresscolors.lua, including \"/dynamic/\" (without quotes)",
-        default="/dynamic/utils/decompresscolors.lua",
-    )
+        default=False)
 
     use_segments = BoolProperty(
         name="Use Segments",
@@ -206,6 +190,11 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
     use_fixedpoint = BoolProperty(
         name="Use FixedPoint",
         description="Use FixedPoint instead of floating point numbers",
+        default=False)
+
+    exclude_seamed_edges = BoolProperty(
+        name="Exclude Seams",
+        description="Stop edges marked as seams from being exported",
         default=False)
 
     def execute(self, context):
