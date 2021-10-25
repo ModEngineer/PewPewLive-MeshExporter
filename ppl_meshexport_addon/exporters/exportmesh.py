@@ -1,5 +1,6 @@
+from math import floor
 import re, bpy, bpy_extras, bmesh, itertools
-from bpy.props import BoolProperty, IntProperty, FloatProperty, StringProperty
+from bpy.props import BoolProperty, IntProperty, FloatProperty, StringProperty, EnumProperty
 from copy import deepcopy
 from ..utils.common import cleanRound, clamp
 from ..lua.luadataexport import toLua, stringKey
@@ -13,16 +14,20 @@ def correctIndex(exclusions, index):
         1 for excludedIndex in exclusions if excludedIndex < index)
 
 
-def serializeMesh(obj, use_local, export_color, exclude_seamed_edges,
-                  max_decimal_digits, multiplier, use_segments):
+def serializeMesh(context, obj, use_local, export_color, exclude_seamed_edges,
+                  max_decimal_digits, multiplier, use_segments,
+                  apply_modifiers):
     # Vertex Processing and init
     out = {}
     out[stringKey("vertexes")] = []
     out[stringKey("segments")] = []
     if bpy.app.version > (2, 79, 0):
-        mesh = obj.to_mesh()
+        if apply_modifiers:
+            mesh = obj.evaluated_get(context.evaluated_depsgraph_get())
+        else:
+            mesh = obj.to_mesh()
     else:
-        mesh = obj.to_mesh(bpy.context.scene, False, "PREVIEW")
+        mesh = obj.to_mesh(context.scene, apply_modifiers, "RENDER")
     if not use_local:
         mesh.transform(obj.matrix_world)
     bm = bmesh.new()
@@ -197,12 +202,30 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         description="Stop edges marked as seams from being exported",
         default=False)
 
+    apply_modifiers = BoolProperty(
+        name="Apply Modifiers (possibly unstable)",
+        description=
+        "Apply modifiers to the object when exporting, possibly unstable if modifiers add or remove geometry",
+        default=False)
+
+    as_animation = EnumProperty(
+        items=[("DISABLED", "Disabled", "", 1),
+               ("INDEXBYFRAME",
+                "Enabled, indices ordered by frame, then by object", "", 2),
+               ("INDEXBYOBJECT",
+                "Enabled, indices ordered by object, then by frame", "", 3)],
+        default="DISABLED",
+        name="As animation",
+        description=
+        "Export each object in each frame of the animation (takes into account frame step size)"
+    )
+
     def execute(self, context):
-        def object_is_visible(obj):
+        def object_is_visible(obj, context):
             if bpy.app.version > (2, 79, 0):
                 return obj.visible_get()
             else:
-                return obj.is_visible(bpy.context.scene)
+                return obj.is_visible(context.scene)
 
         def object_is_selected(obj):
             if bpy.app.version > (2, 79, 0):
@@ -210,22 +233,50 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
             else:
                 return obj.select
 
-        out = []
-        for obj in context.scene.objects:
-            if obj.type == "MESH" and object_is_visible(obj) and (
+        startFrame = context.scene.frame_current
+
+        out = {}
+        if self.as_animation != "DISABLED":
+            frameCount = floor(
+                ((context.scene.frame_end + 1 - context.scene.frame_start) /
+                 context.scene.frame_step))
+            objCount = 0
+            for obj in context.scene.objects:
+                if obj.type == "MESH" and object_is_visible(obj, context) and (
+                    (not self.only_selected) or
+                    (self.only_selected and object_is_selected(obj, context))):
+                    objCount += 1
+
+        for objIndex, obj in enumerate(context.scene.objects):
+            if obj.type == "MESH" and object_is_visible(obj, context) and (
                 (not self.only_selected) or
-                (self.only_selected and object_is_selected(obj))):
-                out.append(
-                    serializeMesh(obj, self.use_local, self.export_color,
-                                  self.exclude_seamed_edges,
-                                  self.max_decimal_digits, self.multiplier,
-                                  self.use_segments))
+                (self.only_selected and object_is_selected(obj, context))):
+                for frameIndex, context.scene.frame_current in enumerate(
+                    (self.as_animation != "DISABLED" and range(
+                        context.scene.frame_start, context.scene.frame_end + 1,
+                        context.scene.frame_step))
+                        or [context.scene.frame_current]):
+                    if self.as_animation == "DISABLED":
+                        index = objIndex
+                    elif self.as_animation == "INDEXBYFRAME":
+                        index = objCount * frameIndex + objIndex
+                    else:
+                        index = frameCount * objIndex + frameIndex
+                    out[index] = serializeMesh(
+                        context, obj, self.use_local, self.export_color,
+                        self.exclude_seamed_edges, self.max_decimal_digits,
+                        self.multiplier, self.use_segments,
+                        self.apply_modifiers)
+
+        context.scene.frame_current = startFrame
+
+        outList = [ item[1] for item in sorted(out.items(), key=lambda item: item[0])]
 
         if self.export_color:
             serialized = "meshes=require(\"" + self.color_decompressor_location + "\")(" + toLua(
-                out, not self.use_fixedpoint) + ")"
+                outList, not self.use_fixedpoint) + ")"
         else:
-            serialized = toLua(out, True, "meshes")
+            serialized = toLua(outList, True, "meshes")
         f = open(self.filepath, 'w', encoding='utf-8')
         f.write(serialized)
         f.close()
