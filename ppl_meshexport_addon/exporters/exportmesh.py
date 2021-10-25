@@ -23,7 +23,7 @@ def serializeMesh(context, obj, use_local, export_color, exclude_seamed_edges,
     out[stringKey("segments")] = []
     if bpy.app.version > (2, 79, 0):
         if apply_modifiers:
-            mesh = obj.evaluated_get(context.evaluated_depsgraph_get())
+            mesh = obj.evaluated_get(context.evaluated_depsgraph_get()).to_mesh()
         else:
             mesh = obj.to_mesh()
     else:
