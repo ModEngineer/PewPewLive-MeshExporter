@@ -240,22 +240,22 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
             frameCount = floor(
                 ((context.scene.frame_end + 1 - context.scene.frame_start) /
                  context.scene.frame_step))
+        for frameIndex, frameNumber in enumerate(
+                    (self.as_animation != "DISABLED" and range(
+                        context.scene.frame_start, context.scene.frame_end + 1,
+                        context.scene.frame_step))
+                        or [context.scene.frame_current]):
+            context.scene.frame_set(frameNumber)
             objCount = 0
             for obj in context.scene.objects:
                 if obj.type == "MESH" and object_is_visible(obj, context) and (
                     (not self.only_selected) or
                     (self.only_selected and object_is_selected(obj))):
                     objCount += 1
-
-        for objIndex, obj in enumerate(context.scene.objects):
-            if obj.type == "MESH" and object_is_visible(obj, context) and (
-                (not self.only_selected) or
-                (self.only_selected and object_is_selected(obj))):
-                for frameIndex, context.scene.frame_current in enumerate(
-                    (self.as_animation != "DISABLED" and range(
-                        context.scene.frame_start, context.scene.frame_end + 1,
-                        context.scene.frame_step))
-                        or [context.scene.frame_current]):
+            for objIndex, obj in enumerate(context.scene.objects):
+                if obj.type == "MESH" and object_is_visible(obj, context) and (
+                    (not self.only_selected) or
+                    (self.only_selected and object_is_selected(obj))):
                     if self.as_animation == "DISABLED":
                         index = objIndex
                     elif self.as_animation == "INDEXBYFRAME":
@@ -268,7 +268,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                         self.multiplier, self.use_segments,
                         self.apply_modifiers)
 
-        context.scene.frame_current = startFrame
+        context.scene.frame_set(startFrame)
 
         outList = [ item[1] for item in sorted(out.items(), key=lambda item: item[0])]
 
