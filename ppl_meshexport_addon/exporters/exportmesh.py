@@ -23,7 +23,8 @@ def serializeMesh(context, obj, use_local, export_color, exclude_seamed_edges,
     out[stringKey("segments")] = []
     if bpy.app.version > (2, 79, 0):
         if apply_modifiers:
-            mesh = obj.evaluated_get(context.evaluated_depsgraph_get()).to_mesh()
+            mesh = obj.evaluated_get(
+                context.evaluated_depsgraph_get()).to_mesh()
         else:
             mesh = obj.to_mesh()
     else:
@@ -235,48 +236,52 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
 
         startFrame = context.scene.frame_current
 
-        out = {}
-        if self.as_animation != "DISABLED":
-            frameCount = floor(
-                ((context.scene.frame_end + 1 - context.scene.frame_start) /
-                 context.scene.frame_step))
-        for frameIndex, frameNumber in enumerate(
-                    (self.as_animation != "DISABLED" and range(
-                        context.scene.frame_start, context.scene.frame_end + 1,
-                        context.scene.frame_step))
-                        or [context.scene.frame_current]):
-            context.scene.frame_set(frameNumber)
-            objCount = 0
+        out = []
+        if self.as_animation == "INDEXBYFRAME" or self.as_animation == "DISABLED": # This is a horrible solution because of the duplicate code. However, handling object visibility animation would be more difficult.
+            for frameNumber in (self.as_animation != "DISABLED" and range(
+                    context.scene.frame_start, context.scene.frame_end + 1,
+                    context.scene.frame_step)) or [
+                        context.scene.frame_current
+                    ]:
+                context.scene.frame_set(frameNumber)
+                for obj in context.scene.objects:
+                    if obj.type == "MESH" and object_is_visible(
+                            obj, context) and ((not self.only_selected) or
+                                               (self.only_selected
+                                                and object_is_selected(obj))):
+                        out.append(
+                            serializeMesh(context, obj, self.use_local,
+                                          self.export_color,
+                                          self.exclude_seamed_edges,
+                                          self.max_decimal_digits,
+                                          self.multiplier, self.use_segments,
+                                          self.apply_modifiers))
+        elif self.as_animation == "INDEXBYOBJECT":
             for obj in context.scene.objects:
-                if obj.type == "MESH" and object_is_visible(obj, context) and (
+                if obj.type == "MESH" and (
                     (not self.only_selected) or
                     (self.only_selected and object_is_selected(obj))):
-                    objCount += 1
-            for objIndex, obj in enumerate(context.scene.objects):
-                if obj.type == "MESH" and object_is_visible(obj, context) and (
-                    (not self.only_selected) or
-                    (self.only_selected and object_is_selected(obj))):
-                    if self.as_animation == "DISABLED":
-                        index = objIndex
-                    elif self.as_animation == "INDEXBYFRAME":
-                        index = objCount * frameIndex + objIndex
-                    else:
-                        index = frameCount * objIndex + frameIndex
-                    out[index] = serializeMesh(
-                        context, obj, self.use_local, self.export_color,
-                        self.exclude_seamed_edges, self.max_decimal_digits,
-                        self.multiplier, self.use_segments,
-                        self.apply_modifiers)
+                    for frameNumber in range(context.scene.frame_start,
+                                             context.scene.frame_end + 1,
+                                             context.scene.frame_step):
+                        context.scene.frame_set(frameNumber)
+                        if object_is_visible(obj, context):
+                            out.append(
+                                serializeMesh(context, obj, self.use_local,
+                                              self.export_color,
+                                              self.exclude_seamed_edges,
+                                              self.max_decimal_digits,
+                                              self.multiplier,
+                                              self.use_segments,
+                                              self.apply_modifiers))
 
         context.scene.frame_set(startFrame)
 
-        outList = [ item[1] for item in sorted(out.items(), key=lambda item: item[0])]
-
         if self.export_color:
             serialized = "meshes=require(\"" + self.color_decompressor_location + "\")(" + toLua(
-                outList, not self.use_fixedpoint) + ")"
+                out, not self.use_fixedpoint) + ")"
         else:
-            serialized = toLua(outList, True, "meshes")
+            serialized = toLua(out, True, "meshes")
         f = open(self.filepath, 'w', encoding='utf-8')
         f.write(serialized)
         f.close()
