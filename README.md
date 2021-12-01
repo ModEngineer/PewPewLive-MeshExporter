@@ -21,7 +21,7 @@ These are used to keep track of edges. This is done because properties cannot be
 ### Found a bug?
 Open an [issue](https://github.com/ModEngineer/PewPewLive-MeshExporter/issues)
 
-### Test Results <!-- The below "tablestart" and "tableend" comments must be kept in their current formats. They are used by Github Actions to automatically update the test results displayed here. -->
+### Test Results (no longer updated, writing tests for newer versions is becoming too complicated) <!-- The below "tablestart" and "tableend" comments must be kept in their current formats. They are used by Github Actions to automatically update the test results displayed here. -->
 <!--tablestart-->
 | Test | 2.90 | 2.80 | 2.79 |
 | --- | --- | --- | --- |
