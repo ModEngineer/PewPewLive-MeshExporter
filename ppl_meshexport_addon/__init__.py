@@ -1,9 +1,9 @@
 bl_info = {
     "name": "PewPew Live Mesh Exporter",
     "author": "ModEngineer",
-    "blender": (2, 90, 0),
+    "blender": (2, 80, 0),
     "description": "A mesh exporter for PewPew Live",
-    "version": (0, 4, 2), #Version formatting here must not be changed! The test-versions Github Action relies on this to name releases.
+    "version": (0, 4, 3), #Version formatting here must not be changed! The test-versions Github Action relies on this to name releases.
     "tracker_url":
     "https://www.github.com/ModEngineer/PewPewLive-MeshExporter/issues",
     "category": "Import-Export"
@@ -61,6 +61,8 @@ def unregister(stop=-1):
 
 
 def register():
+    if bpy.app.version==(2, 79, 0):
+        bl_info["blender"] = (2, 79, 0)
     importlib.reload(importlist)
     try:
         for index, registrationItem in enumerate(importlist.importorder):
