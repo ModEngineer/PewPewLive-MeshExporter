@@ -30,6 +30,7 @@ class PewPewSceneProperties(bpy.types.PropertyGroup):
             size=3,
             update=updateVertexColors,
             default=(1.0, 1.0, 1.0))
+    is_updating_dual_meshes = bpy.props.BoolProperty(default=False)
 
 
 class SegmentProperties(bpy.types.PropertyGroup):
@@ -60,10 +61,28 @@ class SegmentProperties(bpy.types.PropertyGroup):
                                       graph)
         return graph
 
+class DualMeshProperties(bpy.types.PropertyGroup):
+    is_dual_mesh = bpy.props.BoolProperty(default=False)
+    source = bpy.props.PointerProperty(type=bpy.types.Object)
+    use_color = bpy.props.BoolProperty(default=True)
+    exclude_seamed_edges = bpy.props.BoolProperty(default=False)
+    use_segments = bpy.props.BoolProperty(default=True)
+    apply_modifiers = bpy.props.BoolProperty(default=False)
+    cylinder_resolution = bpy.props.IntProperty(min=3, default=16)
+    cylinder_radius = bpy.props.FloatProperty(default=1.0)
+    shade_smooth = bpy.props.EnumProperty(items=[
+        ("OFF", "Off", "", 1),
+        ("WITHSHARPMITERS", "With sharp miters (recommended)", "", 2),
+        ("FULL", "Fully shade smooth", "", 3)
+    ],
+    default="WITHSHARPMITERS")
+
+    has_target = bpy.props.BoolProperty(default=False)
 
 class PewPewObjectProperties(bpy.types.PropertyGroup):
     segments = bpy.props.CollectionProperty(type=SegmentProperties)
     active_segment_index = bpy.props.IntProperty(min=0)
+    dual_mesh = bpy.props.PointerProperty(type=DualMeshProperties)
 
 
 class PewPewMeshExporterPreferences(bpy.types.AddonPreferences):
