@@ -1,4 +1,4 @@
-import bpy
+import bpy, bmesh
 
 #Update functions:
 from ..newgui.vertexcolorimprovement import updateVertexColors
@@ -85,6 +85,45 @@ class PewPewObjectProperties(bpy.types.PropertyGroup):
     segments = bpy.props.CollectionProperty(type=SegmentProperties)
     active_segment_index = bpy.props.IntProperty(min=0)
     dual_mesh = bpy.props.PointerProperty(type=DualMeshProperties)
+    last_hash = bpy.props.StringProperty(default="")
+
+
+def getMeshHash(self):
+    bm = bmesh.new()
+    bm.from_mesh(self.id_data)
+    bm.verts.ensure_lookup_table()
+    bm.edges.ensure_lookup_table()
+    bm.faces.ensure_lookup_table()
+
+    if bm.loops.layers.color.active:
+        return str(
+            hash(
+                frozenset((frozenset(
+                    (tuple(vert.co),
+                     vert.link_loops[0][bm.loops.layers.color.active])
+                    for vert in face.verts),
+                           frozenset(
+                               frozenset([(tuple(edge.verts[0].co),
+                                           edge.verts[0].link_loops[0][
+                                               bm.loops.layers.color.active]),
+                                          (tuple(edge.verts[1].co),
+                                           edge.verts[1].link_loops[0][
+                                               bm.loops.layers.color.active])])
+                               for edge in face.edges)) for face in bm.faces)))
+    else:
+        return str(
+            hash(
+                frozenset((
+                    frozenset(tuple(vert.co) for vert in face.verts),
+                    frozenset(
+                        frozenset(
+                            [tuple(edge.verts[0].co),
+                             tuple(edge.verts[1].co)]) for edge in face.edges))
+                          for face in bm.faces)))
+
+
+class PewPewMeshProperties(bpy.types.PropertyGroup):
+    hash = bpy.props.StringProperty(get=getMeshHash)
 
 
 class PewPewMeshExporterPreferences(bpy.types.AddonPreferences):
@@ -110,8 +149,11 @@ def register():
         type=PewPewSceneProperties)
     bpy.types.Object.pewpew = bpy.props.PointerProperty(
         type=PewPewObjectProperties)
+    bpy.types.Mesh.pewpew = bpy.props.PointerProperty(
+        type=PewPewMeshProperties)
 
 
 def unregister():
     del bpy.types.Scene.pewpew
     del bpy.types.Object.pewpew
+    del bpy.types.Mesh.pewpew

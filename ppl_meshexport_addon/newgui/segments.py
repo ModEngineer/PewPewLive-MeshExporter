@@ -34,7 +34,9 @@ def preventDuplicateSegmentName(self, context):
     self.old_segment_name = value
 
 
-def vGroupBaseNameGetter(self):
+def vGroupBaseNameGetter(
+    self
+):  # self is the owner of the property, so in this case, the PropertyGroup
     return "pewpew_segment_" + self.segment_name.replace("\\", "\\\\").replace(
         "_", "\\_") + "_vgroup"
 

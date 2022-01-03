@@ -2,7 +2,6 @@ import bpy, bmesh, itertools, mathutils
 from ..modules import pygraphutils
 from ..exporters.exportmesh import correctIndex
 from math import pi, sqrt
-from collections import OrderedDict
 
 
 @bpy.app.handlers.persistent
@@ -33,6 +32,7 @@ def update_dual_meshes(scene):
         if not (object_is_visible(obj, bpy.context)
                 and obj.pewpew.dual_mesh.is_dual_mesh):
             continue
+
         source = obj.pewpew.dual_mesh.source
         newbm = bmesh.new()
         if bpy.app.version > (2, 79, 0):
@@ -45,7 +45,12 @@ def update_dual_meshes(scene):
             mesh = source.to_mesh(bpy.context.scene,
                                   obj.pewpew.dual_mesh.apply_modifiers,
                                   "RENDER")
-        mesh.transform(source.matrix_world)
+        mesh.transform(mathutils.Matrix.Diagonal(source.scale).to_4x4())
+        current_hash = mesh.pewpew.hash  # Not using := here because it'd break 2.79 compatibility
+        if current_hash == source.pewpew.last_hash:
+            continue
+        else:
+            source.pewpew.last_hash = current_hash
         bm = bmesh.new()
         bm.from_mesh(mesh)
         bm.verts.ensure_lookup_table()
@@ -311,6 +316,12 @@ class CreateWireframeOperator(bpy.types.Operator):
         ob.pewpew.dual_mesh.cylinder_radius = self.cylinder_radius
         ob.pewpew.dual_mesh.shade_smooth = self.shade_smooth
 
+        copy_location = ob.constraints.new("COPY_LOCATION")
+        copy_location.target = context.object
+
+        copy_rotation = ob.constraints.new("COPY_ROTATION")
+        copy_rotation.target = context.object
+
         if bpy.app.version > (2, 79, 0):
             bpy.context.collection.objects.link(ob)
         else:
@@ -333,6 +344,17 @@ class ApplyWireframeOperator(bpy.types.Operator):
 
     def execute(self, context):
         context.object.pewpew.dual_mesh.is_dual_mesh = False
+
+        constraintsToBeRemoved = []
+        for constraint in context.object.constraints:
+            if (
+                    constraint.type == "COPY_LOCATION"
+                    or constraint.type == "COPY_ROTATION"
+            ) and constraint.target == context.object.pewpew.dual_mesh.source:
+                constraintsToBeRemoved.append(constraint)
+        for constraint in constraintsToBeRemoved:
+            context.object.constraints.remove(constraint)
+
         return {"FINISHED"}
 
 

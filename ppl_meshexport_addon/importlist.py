@@ -8,6 +8,7 @@ importorder = [
     properties.SegmentProperties,
     properties.DualMeshProperties,
     properties.PewPewObjectProperties,
+    properties.PewPewMeshProperties,
     properties.PewPewMeshExporterPreferences,
     (properties.register, properties.unregister),
     segments.MESH_UL_segments,
