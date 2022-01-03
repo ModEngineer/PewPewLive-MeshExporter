@@ -1,5 +1,5 @@
 from math import floor
-import re, bpy, bpy_extras, bmesh, itertools
+import re, bpy, bpy_extras, bmesh, itertools, numpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, StringProperty, EnumProperty
 from copy import deepcopy
 from ..utils.common import cleanRound, clamp
@@ -16,7 +16,7 @@ def correctIndex(exclusions, index):
 
 def serializeMesh(context, obj, use_local, export_color, exclude_seamed_edges,
                   max_decimal_digits, multiplier, use_segments,
-                  apply_modifiers):
+                  apply_modifiers, compress):
     # Vertex Processing and init
     out = {}
     out[stringKey("vertexes")] = []
@@ -34,7 +34,10 @@ def serializeMesh(context, obj, use_local, export_color, exclude_seamed_edges,
     bm = bmesh.new()
     bm.from_mesh(mesh)
     if export_color and bm.loops.layers.color.active:
-        out[stringKey("colors")] = {}
+        if compress:
+            out[stringKey("colors")] = {}
+        else:
+            out[stringKey("colors")] = []
     includedVertices = sorted(list(
         set(
             itertools.chain.from_iterable([
@@ -56,7 +59,6 @@ def serializeMesh(context, obj, use_local, export_color, exclude_seamed_edges,
         if export_color and bm.loops.layers.color.active:
             #Face vertices are ignored. I don't have the time to support multiple colors per vertex.
             vertexcolor = vertex.link_loops[0][bm.loops.layers.color.active]
-            colorhex = None
             if bpy.app.version > (2, 79, 0):
                 colorhex = hexint(
                     (clamp(round(vertexcolor[0] * 255), 0, 255) << 24) +
@@ -68,10 +70,13 @@ def serializeMesh(context, obj, use_local, export_color, exclude_seamed_edges,
                     (clamp(round(vertexcolor[0] * 255), 0, 255) << 24) +
                     (clamp(round(vertexcolor[1] * 255), 0, 255) << 16) +
                     (clamp(round(vertexcolor[2] * 255), 0, 255) << 8) + 0xff)
-            out[stringKey("colors")][
-                str(colorhex)] = out[stringKey("colors")].get(
-                    str(colorhex),
-                    []) + [correctIndex(excludedVertexIndices, vertex.index)]
+            if compress:
+                out[stringKey("colors")][
+                    str(colorhex)] = out[stringKey("colors")].get(
+                        str(colorhex),
+                        []) + [correctIndex(excludedVertexIndices, vertex.index)]
+            else:
+                out[stringKey("colors")].append(str(colorhex))
     # Multi-edge segment processor
     remainingEdges = set(bm.edges)
     if obj.pewpew.segments and use_segments:
@@ -112,7 +117,7 @@ def serializeMesh(context, obj, use_local, export_color, exclude_seamed_edges,
             ])
 
     # The following code is the color compressor. I have no clue how it works, but it works.
-    if export_color and bm.loops.layers.color.active:
+    if export_color and bm.loops.layers.color.active and compress:
         for color in out[stringKey("colors")]:
             colorIndices = deepcopy(out[stringKey("colors")][color])
             colorIndices.sort()
@@ -152,6 +157,17 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                                  options={"HIDDEN"},
                                  maxlen=511)
 
+    compress_meshes = BoolProperty(
+        name="Compress Meshes",
+        description="Enable compression of meshes (recommended)",
+        default=True)
+
+    mesh_decompressor_location = StringProperty(
+        name="Mesh Decompressor Location",
+        description=
+        "The location of decompressmeshes.lua, including \"/dynamic/\" (without quotes)",
+        default="/dynamic/utils/decompressmeshes.lua")
+
     only_selected = BoolProperty(name="Only Export Selected Objects",
                                  description="Only export selected objects",
                                  default=False)
@@ -159,12 +175,6 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
     export_color = BoolProperty(name="Export Color",
                                 description="Export vertex colors",
                                 default=False)
-
-    color_decompressor_location = StringProperty(
-        name="Color Decompressor Location",
-        description=
-        "The location of decompresscolors.lua, including \"/dynamic/\" (without quotes)",
-        default="/dynamic/utils/decompresscolors.lua")
 
     max_decimal_digits = IntProperty(
         name="Maximum Decimal Digits",
@@ -226,6 +236,29 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         description="Exclude \"PewPew Wireframe\" dual meshes",
         default=True)
 
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        col = layout.column()
+
+        col.prop(self, "compress_meshes")
+
+        mesh_decompressor_location_row = col.row()
+        mesh_decompressor_location_row.prop(self, "mesh_decompressor_location")
+
+        col.prop(self, "only_selected")
+        col.prop(self, "export_color")
+        col.prop(self, "max_decimal_digits")
+        col.prop(self, "multiplier")
+        col.prop(self, "use_local")
+        col.prop(self, "use_segments")
+        col.prop(self, "use_fixedpoint")
+        col.prop(self, "exclude_seamed_edges")
+        col.prop(self, "apply_modifiers")
+        col.prop(self, "as_animation")
+
+        mesh_decompressor_location_row.enabled = self.compress_meshes
+
     def execute(self, context):
         def object_is_visible(obj, context):
             if bpy.app.version > (2, 79, 0):
@@ -260,7 +293,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                                           self.exclude_seamed_edges,
                                           self.max_decimal_digits,
                                           self.multiplier, self.use_segments,
-                                          self.apply_modifiers))
+                                          self.apply_modifiers, self.compress_meshes))
         elif self.as_animation == "INDEXBYOBJECT":
             for obj in context.scene.objects:
                 if obj.type == "MESH" and (
@@ -278,15 +311,17 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                                               self.max_decimal_digits,
                                               self.multiplier,
                                               self.use_segments,
-                                              self.apply_modifiers))
+                                              self.apply_modifiers, self.compress_meshes))
 
         context.scene.frame_set(startFrame)
 
-        if self.export_color:
-            serialized = "meshes=require(\"" + self.color_decompressor_location + "\")(" + toLua(
-                out, not self.use_fixedpoint) + ")"
-        else:
-            serialized = toLua(out, True, "meshes")
+        if self.compress_meshes:
+            for originalIndex, mesh in enumerate(out):
+                for k, v in mesh.items():
+                    newIndex = [mesh2.get(k) for mesh2 in out].index(v)
+                    if originalIndex != newIndex:
+                        out[originalIndex][k] = newIndex + 1
+        serialized = "meshes=" + (("require(\"" + self.mesh_decompressor_location + "\")(") if self.compress_meshes else "") + toLua(out, not self.use_fixedpoint) + (")" if self.compress_meshes else "")
         f = open(self.filepath, 'w', encoding='utf-8')
         f.write(serialized)
         f.close()
