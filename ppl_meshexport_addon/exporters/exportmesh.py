@@ -221,6 +221,11 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         "Export each object in each frame of the animation (takes into account frame step size)"
     )
 
+    exclude_wireframe_dual_meshes = BoolProperty(
+        name="Exclude Wireframe Dual Meshes",
+        description="Exclude \"PewPew Wireframe\" dual meshes",
+        default=True)
+
     def execute(self, context):
         def object_is_visible(obj, context):
             if bpy.app.version > (2, 79, 0):
@@ -248,7 +253,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                     if obj.type == "MESH" and object_is_visible(
                             obj, context) and ((not self.only_selected) or
                                                (self.only_selected
-                                                and object_is_selected(obj))):
+                                                and object_is_selected(obj))) and ((not self.exclude_wireframe_dual_meshes) or (self.exclude_wireframe_dual_meshes and not obj.pewpew.dual_mesh.is_dual_mesh)):
                         out.append(
                             serializeMesh(context, obj, self.use_local,
                                           self.export_color,
@@ -260,7 +265,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
             for obj in context.scene.objects:
                 if obj.type == "MESH" and (
                     (not self.only_selected) or
-                    (self.only_selected and object_is_selected(obj))):
+                    (self.only_selected and object_is_selected(obj)))  and ((not self.exclude_wireframe_dual_meshes) or (self.exclude_wireframe_dual_meshes and not obj.pewpew.dual_mesh.is_dual_mesh)):
                     for frameNumber in range(context.scene.frame_start,
                                              context.scene.frame_end + 1,
                                              context.scene.frame_step):
