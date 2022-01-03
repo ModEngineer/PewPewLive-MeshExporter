@@ -3,11 +3,11 @@ bl_info = {
     "author": "ModEngineer",
     "blender": (2, 80, 0),
     "description": "A mesh exporter for PewPew Live",
-    "version": (0, 4, 3), #Version formatting here must not be changed! The test-versions Github Action relies on this to name releases.
+    "version": (0, 4, 3),
     "tracker_url":
     "https://www.github.com/ModEngineer/PewPewLive-MeshExporter/issues",
     "category": "Import-Export"
-}
+} #bl_info MUST be the first thing in the file. AST is used to parse this and get the version when publishing a release.
 
 #Player ship collision has diameter of 16 units
 #Player ship model is 32 units wide
