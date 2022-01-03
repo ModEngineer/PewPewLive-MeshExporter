@@ -71,10 +71,11 @@ def serializeMesh(context, obj, use_local, export_color, exclude_seamed_edges,
                     (clamp(round(vertexcolor[1] * 255), 0, 255) << 16) +
                     (clamp(round(vertexcolor[2] * 255), 0, 255) << 8) + 0xff)
             if compress:
-                out[stringKey("colors")][
-                    str(colorhex)] = out[stringKey("colors")].get(
-                        str(colorhex),
-                        []) + [correctIndex(excludedVertexIndices, vertex.index)]
+                out[stringKey("colors")][str(
+                    colorhex)] = out[stringKey("colors")].get(
+                        str(colorhex), []) + [
+                            correctIndex(excludedVertexIndices, vertex.index)
+                        ]
             else:
                 out[stringKey("colors")].append(str(colorhex))
     # Multi-edge segment processor
@@ -275,7 +276,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         startFrame = context.scene.frame_current
 
         out = []
-        if self.as_animation == "INDEXBYFRAME" or self.as_animation == "DISABLED": # This is a horrible solution because of the duplicate code. However, handling object visibility animation would be more difficult.
+        if self.as_animation == "INDEXBYFRAME" or self.as_animation == "DISABLED":  # This is a horrible solution because of the duplicate code. However, handling object visibility animation would be more difficult.
             for frameNumber in (self.as_animation != "DISABLED" and range(
                     context.scene.frame_start, context.scene.frame_end + 1,
                     context.scene.frame_step)) or [
@@ -284,21 +285,30 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                 context.scene.frame_set(frameNumber)
                 for obj in context.scene.objects:
                     if obj.type == "MESH" and object_is_visible(
-                            obj, context) and ((not self.only_selected) or
-                                               (self.only_selected
-                                                and object_is_selected(obj))) and ((not self.exclude_wireframe_dual_meshes) or (self.exclude_wireframe_dual_meshes and not obj.pewpew.dual_mesh.is_dual_mesh)):
+                            obj, context) and (
+                                (not self.only_selected) or
+                                (self.only_selected
+                                 and object_is_selected(obj))) and (
+                                     (not self.exclude_wireframe_dual_meshes)
+                                     or
+                                     (self.exclude_wireframe_dual_meshes and
+                                      not obj.pewpew.dual_mesh.is_dual_mesh)):
                         out.append(
                             serializeMesh(context, obj, self.use_local,
                                           self.export_color,
                                           self.exclude_seamed_edges,
                                           self.max_decimal_digits,
                                           self.multiplier, self.use_segments,
-                                          self.apply_modifiers, self.compress_meshes))
+                                          self.apply_modifiers,
+                                          self.compress_meshes))
         elif self.as_animation == "INDEXBYOBJECT":
             for obj in context.scene.objects:
                 if obj.type == "MESH" and (
                     (not self.only_selected) or
-                    (self.only_selected and object_is_selected(obj)))  and ((not self.exclude_wireframe_dual_meshes) or (self.exclude_wireframe_dual_meshes and not obj.pewpew.dual_mesh.is_dual_mesh)):
+                    (self.only_selected and object_is_selected(obj))) and (
+                        (not self.exclude_wireframe_dual_meshes) or
+                        (self.exclude_wireframe_dual_meshes
+                         and not obj.pewpew.dual_mesh.is_dual_mesh)):
                     for frameNumber in range(context.scene.frame_start,
                                              context.scene.frame_end + 1,
                                              context.scene.frame_step):
@@ -311,7 +321,8 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                                               self.max_decimal_digits,
                                               self.multiplier,
                                               self.use_segments,
-                                              self.apply_modifiers, self.compress_meshes))
+                                              self.apply_modifiers,
+                                              self.compress_meshes))
 
         context.scene.frame_set(startFrame)
 
@@ -321,7 +332,11 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
                     newIndex = [mesh2.get(k) for mesh2 in out].index(v)
                     if originalIndex != newIndex:
                         out[originalIndex][k] = newIndex + 1
-        serialized = "meshes=" + (("require(\"" + self.mesh_decompressor_location + "\")(") if self.compress_meshes else "") + toLua(out, not self.use_fixedpoint) + (")" if self.compress_meshes else "")
+        serialized = "meshes=" + (
+            ("require(\"" + self.mesh_decompressor_location +
+             "\")(") if self.compress_meshes else "") + toLua(
+                 out, not self.use_fixedpoint) + (")" if self.compress_meshes
+                                                  else "")
         f = open(self.filepath, 'w', encoding='utf-8')
         f.write(serialized)
         f.close()

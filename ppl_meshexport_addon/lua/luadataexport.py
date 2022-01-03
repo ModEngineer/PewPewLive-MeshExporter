@@ -67,6 +67,6 @@ def toLua(data, allowFloats, rootName=""):
 
 
 def toFxP(value):
-    return ("" if int(value >= 0) else "-") + str(min(
-        (2 << 51), floor(abs(value)))) + "." + str(
+    return ("" if int(value >= 0) else "-") + str(
+        min((2 << 51), floor(abs(value)))) + "." + str(
             floor((abs(value) % 1) * 4096.0)) + "fx"

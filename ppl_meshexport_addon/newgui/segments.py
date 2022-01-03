@@ -191,17 +191,22 @@ class SegmentAssignOperator(bpy.types.Operator):
             firstVertGroups = [
                 groupElement.group for groupElement in
                 context.object.data.vertices[edge.vertices[0]].groups
-                if re.match("pewpew_segment_.+_vgroup.*", context.object.vertex_groups[
-                    groupElement.group].name)
+                if re.match(
+                    "pewpew_segment_.+_vgroup.*", context.object.vertex_groups[
+                        groupElement.group].name)
             ]
             secondVertGroups = [
                 groupElement.group for groupElement in
                 context.object.data.vertices[edge.vertices[1]].groups
-                if re.match("pewpew_segment_.+_vgroup.*", context.object.vertex_groups[
-                    groupElement.group].name)
+                if re.match(
+                    "pewpew_segment_.+_vgroup.*", context.object.vertex_groups[
+                        groupElement.group].name)
             ]
             if any(group in secondVertGroups for group in firstVertGroups):
-                self.report({"WARNING"}, "A selected edge is already part of a segment. This edge has been dropped from this assign operation. If this edge was already part of this segment, you can safely ignore this warning.")
+                self.report({
+                    "WARNING"
+                }, "A selected edge is already part of a segment. This edge has been dropped from this assign operation. If this edge was already part of this segment, you can safely ignore this warning."
+                            )
                 continue
             newVGroup = context.object.vertex_groups.new(name=vGroupNameBase)
 
@@ -287,7 +292,8 @@ class SegmentSelectOperator(bpy.types.Operator):
         vGroupNameBase = context.object.pewpew.segments[
             context.object.pewpew.active_segment_index].vgroup_base_name
         if self.mode:
-            selectedEdges = set(edge for edge in context.object.data.edges if edge.select)
+            selectedEdges = set(edge for edge in context.object.data.edges
+                                if edge.select)
         else:
             deselectedEdges = set()
         for edge in context.object.data.edges:
@@ -310,13 +316,19 @@ class SegmentSelectOperator(bpy.types.Operator):
                 else:
                     deselectedEdges.add(edge)
         if self.mode:
-            selectedEdges = set((edge.vertices[0], edge.vertices[1]) for edge in selectedEdges)
+            selectedEdges = set(
+                (edge.vertices[0], edge.vertices[1]) for edge in selectedEdges)
         else:
-            deselectedEdges = set((edge.vertices[0], edge.vertices[1]) for edge in deselectedEdges)
+            deselectedEdges = set((edge.vertices[0], edge.vertices[1])
+                                  for edge in deselectedEdges)
         for poly in context.object.data.polygons:
-            if self.mode and all( (polyEdge in selectedEdges or polyEdge[::-1] in selectedEdges) for polyEdge in poly.edge_keys):
+            if self.mode and all(
+                (polyEdge in selectedEdges or polyEdge[::-1] in selectedEdges)
+                    for polyEdge in poly.edge_keys):
                 poly.select = True
-            elif (not self.mode) and any( (polyEdge in deselectedEdges or polyEdge[::-1] in deselectedEdges) for polyEdge in poly.edge_keys):
+            elif (not self.mode) and any((polyEdge in deselectedEdges
+                                          or polyEdge[::-1] in deselectedEdges)
+                                         for polyEdge in poly.edge_keys):
                 poly.select = False
         bpy.ops.object.mode_set(mode="EDIT")
         return {"FINISHED"}

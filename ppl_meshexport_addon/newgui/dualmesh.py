@@ -65,7 +65,7 @@ def update_dual_meshes(scene):
         ]
         if obj.pewpew.dual_mesh.use_color and bm.loops.layers.color.active:
             colorloop = newbm.loops.layers.color.verify()
-        if obj.pewpew.dual_mesh.shade_smooth=="WITHSHARPMITERS":
+        if obj.pewpew.dual_mesh.shade_smooth == "WITHSHARPMITERS":
             miteredgelist = []
             capfacelist = []
         remainingEdges = set(bm.edges)
@@ -184,13 +184,16 @@ def update_dual_meshes(scene):
                                     (vertlist[index], vertlist[index + 1])))
                         edgelistlist.append(edgelist)
 
-                    if obj.pewpew.dual_mesh.shade_smooth=="WITHSHARPMITERS":
-                        miteredgelist += list(itertools.chain.from_iterable(edgelistlist))
+                    if obj.pewpew.dual_mesh.shade_smooth == "WITHSHARPMITERS":
+                        miteredgelist += list(
+                            itertools.chain.from_iterable(edgelistlist))
 
                     if not islooped:
-                        if obj.pewpew.dual_mesh.shade_smooth=="WITHSHARPMITERS":
-                            capfacelist.append(newbm.faces.new(vertlistlist[0]))
-                            capfacelist.append(newbm.faces.new(vertlistlist[-1]))
+                        if obj.pewpew.dual_mesh.shade_smooth == "WITHSHARPMITERS":
+                            capfacelist.append(newbm.faces.new(
+                                vertlistlist[0]))
+                            capfacelist.append(
+                                newbm.faces.new(vertlistlist[-1]))
                         else:
                             newbm.faces.new(vertlistlist[0])
                             newbm.faces.new(vertlistlist[-1])
@@ -232,7 +235,7 @@ def update_dual_meshes(scene):
                     edgelist.append(
                         newbm.edges.new((c2verts[index], c2verts[index + 1])))
 
-                if obj.pewpew.dual_mesh.shade_smooth=="WITHSHARPMITERS":
+                if obj.pewpew.dual_mesh.shade_smooth == "WITHSHARPMITERS":
                     miteredgelist += edgelist
                     capfacelist.append(newbm.faces.new(c1verts))
                     capfacelist.append(newbm.faces.new(c2verts))
@@ -252,13 +255,13 @@ def update_dual_meshes(scene):
                             loops[colorloop] = edge.verts[1].link_loops[0][
                                 bm.loops.layers.color.active]
 
-        if obj.pewpew.dual_mesh.shade_smooth!="OFF":
+        if obj.pewpew.dual_mesh.shade_smooth != "OFF":
             for face in newbm.faces:
-                if obj.pewpew.dual_mesh.shade_smooth=="WITHSHARPMITERS" and face in capfacelist:
+                if obj.pewpew.dual_mesh.shade_smooth == "WITHSHARPMITERS" and face in capfacelist:
                     continue
                 face.smooth = True
             for edge in newbm.edges:
-                if obj.pewpew.dual_mesh.shade_smooth=="WITHSHARPMITERS" and edge in miteredgelist:
+                if obj.pewpew.dual_mesh.shade_smooth == "WITHSHARPMITERS" and edge in miteredgelist:
                     continue
                 edge.smooth = True
 
@@ -266,28 +269,35 @@ def update_dual_meshes(scene):
         bm.free()
         newbm.free()
 
+
 class CreateWireframeOperator(bpy.types.Operator):
     """Creates a new PewPew-style wireframe object for the selected object"""
     bl_idname = "mesh.create_pewpew_wireframe"
     bl_label = "Create PewPew Wireframe"
 
     use_color = bpy.props.BoolProperty(default=True, name="Use Color")
-    exclude_seamed_edges = bpy.props.BoolProperty(default=False, name="Exclude Seamed Edges")
+    exclude_seamed_edges = bpy.props.BoolProperty(default=False,
+                                                  name="Exclude Seamed Edges")
     use_segments = bpy.props.BoolProperty(default=True, name="Use Segments")
-    apply_modifiers = bpy.props.BoolProperty(default=False, name="Apply Modifiers")
-    cylinder_resolution = bpy.props.IntProperty(min=3, default=16, name="Cylinder Resolution")
-    cylinder_radius = bpy.props.FloatProperty(default=1.0, name="Cylinder Radius")
+    apply_modifiers = bpy.props.BoolProperty(default=False,
+                                             name="Apply Modifiers")
+    cylinder_resolution = bpy.props.IntProperty(min=3,
+                                                default=16,
+                                                name="Cylinder Resolution")
+    cylinder_radius = bpy.props.FloatProperty(default=1.0,
+                                              name="Cylinder Radius")
     shade_smooth = bpy.props.EnumProperty(items=[
         ("OFF", "Off", "", 1),
         ("WITHSHARPMITERS", "With sharp miters (recommended)", "", 2),
         ("FULL", "Fully shade smooth", "", 3)
     ],
-    default="WITHSHARPMITERS",
-    name="Shade Smooth")
+                                          default="WITHSHARPMITERS",
+                                          name="Shade Smooth")
 
     def execute(self, context):
         me = bpy.data.meshes.new(context.object.name + "-pewpew-wireframe")
-        ob = bpy.data.objects.new(context.object.name + "-pewpew-wireframe", me)
+        ob = bpy.data.objects.new(context.object.name + "-pewpew-wireframe",
+                                  me)
 
         context.object.pewpew.dual_mesh.has_target = True
         ob.pewpew.dual_mesh.is_dual_mesh = True
@@ -311,6 +321,7 @@ class CreateWireframeOperator(bpy.types.Operator):
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
 
+
 class ApplyWireframeOperator(bpy.types.Operator):
     """Applies the PewPew wireframe to the dual-mesh"""
     bl_idname = "mesh.apply_pewpew_wireframe"
@@ -324,6 +335,7 @@ class ApplyWireframeOperator(bpy.types.Operator):
         context.object.pewpew.dual_mesh.is_dual_mesh = False
         return {"FINISHED"}
 
+
 class DATA_PT_pewpew_wireframe(bpy.types.Panel):
     bl_label = "PewPew Wireframe"
     bl_space_type = "PROPERTIES"
@@ -334,19 +346,36 @@ class DATA_PT_pewpew_wireframe(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         return context.object and context.object.type == "MESH"
-    
+
     def draw(self, context):
         layout = self.layout
         if context.object.pewpew.dual_mesh.is_dual_mesh:
-            layout.prop(context.object.pewpew.dual_mesh, "source", text="Source Mesh")
-            layout.prop(context.object.pewpew.dual_mesh, "use_color", text="Use Color")
-            layout.prop(context.object.pewpew.dual_mesh, "exclude_seamed_edges", text="Exclude Seamed Edges")
-            layout.prop(context.object.pewpew.dual_mesh, "use_segments", text="Use Segments")
-            layout.prop(context.object.pewpew.dual_mesh, "apply_modifiers", text="Apply Modifiers")
-            layout.prop(context.object.pewpew.dual_mesh, "cylinder_resolution", text="Cylinder Resolution")
-            layout.prop(context.object.pewpew.dual_mesh, "cylinder_radius", text="Cylinder Radius")
-            layout.prop(context.object.pewpew.dual_mesh, "shade_smooth", text="Shade Smooth")
-            layout.operator("mesh.apply_pewpew_wireframe", text="Apply PewPew Wireframe")
+            layout.prop(context.object.pewpew.dual_mesh,
+                        "source",
+                        text="Source Mesh")
+            layout.prop(context.object.pewpew.dual_mesh,
+                        "use_color",
+                        text="Use Color")
+            layout.prop(context.object.pewpew.dual_mesh,
+                        "exclude_seamed_edges",
+                        text="Exclude Seamed Edges")
+            layout.prop(context.object.pewpew.dual_mesh,
+                        "use_segments",
+                        text="Use Segments")
+            layout.prop(context.object.pewpew.dual_mesh,
+                        "apply_modifiers",
+                        text="Apply Modifiers")
+            layout.prop(context.object.pewpew.dual_mesh,
+                        "cylinder_resolution",
+                        text="Cylinder Resolution")
+            layout.prop(context.object.pewpew.dual_mesh,
+                        "cylinder_radius",
+                        text="Cylinder Radius")
+            layout.prop(context.object.pewpew.dual_mesh,
+                        "shade_smooth",
+                        text="Shade Smooth")
+            layout.operator("mesh.apply_pewpew_wireframe",
+                            text="Apply PewPew Wireframe")
         else:
             layout.operator("mesh.create_pewpew_wireframe")
 

@@ -61,6 +61,7 @@ class SegmentProperties(bpy.types.PropertyGroup):
                                       graph)
         return graph
 
+
 class DualMeshProperties(bpy.types.PropertyGroup):
     is_dual_mesh = bpy.props.BoolProperty(default=False)
     source = bpy.props.PointerProperty(type=bpy.types.Object)
@@ -75,9 +76,10 @@ class DualMeshProperties(bpy.types.PropertyGroup):
         ("WITHSHARPMITERS", "With sharp miters (recommended)", "", 2),
         ("FULL", "Fully shade smooth", "", 3)
     ],
-    default="WITHSHARPMITERS")
+                                          default="WITHSHARPMITERS")
 
     has_target = bpy.props.BoolProperty(default=False)
+
 
 class PewPewObjectProperties(bpy.types.PropertyGroup):
     segments = bpy.props.CollectionProperty(type=SegmentProperties)

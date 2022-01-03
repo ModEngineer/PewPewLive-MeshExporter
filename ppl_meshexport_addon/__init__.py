@@ -7,7 +7,7 @@ bl_info = {
     "tracker_url":
     "https://www.github.com/ModEngineer/PewPewLive-MeshExporter/issues",
     "category": "Import-Export"
-} #bl_info MUST be the first thing in the file. AST is used to parse this and get the version when publishing a release.
+}  #bl_info MUST be the first thing in the file. AST is used to parse this and get the version when publishing a release.
 
 #Player ship collision has diameter of 16 units
 #Player ship model is 32 units wide
@@ -18,17 +18,23 @@ import bpy, importlib
 
 from . import importlist
 
+
 # Function used for compatibility across Blender versions. Taken from https://github.com/CGCookie/blender-addon-updater/blob/master/addon_updater_ops.py
 def make_annotations(cls):
     """Add annotation attribute to fields to avoid Blender 2.8+ warnings"""
     if not hasattr(bpy.app, "version") or bpy.app.version < (2, 80):
         return cls
     if bpy.app.version < (2, 93, 0):
-        bl_props = {k: v for k, v in cls.__dict__.items()
-                    if isinstance(v, tuple)}
+        bl_props = {
+            k: v
+            for k, v in cls.__dict__.items() if isinstance(v, tuple)
+        }
     else:
-        bl_props = {k: v for k, v in cls.__dict__.items()
-                    if isinstance(v, bpy.props._PropertyDeferred)}
+        bl_props = {
+            k: v
+            for k, v in cls.__dict__.items()
+            if isinstance(v, bpy.props._PropertyDeferred)
+        }
     if bl_props:
         if '__annotations__' not in cls.__dict__:
             setattr(cls, '__annotations__', {})
@@ -37,6 +43,7 @@ def make_annotations(cls):
             annotations[k] = v
             delattr(cls, k)
     return cls
+
 
 def unregister(stop=-1):
     if stop == -1:
@@ -61,7 +68,7 @@ def unregister(stop=-1):
 
 
 def register():
-    if bpy.app.version==(2, 79, 0):
+    if bpy.app.version == (2, 79, 0):
         bl_info["blender"] = (2, 79, 0)
     importlib.reload(importlist)
     try:
