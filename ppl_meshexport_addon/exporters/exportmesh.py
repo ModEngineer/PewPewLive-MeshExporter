@@ -166,8 +166,8 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
     mesh_decompressor_location = StringProperty(
         name="Mesh Decompressor Location",
         description=
-        "The location of decompressmeshes.lua, including \"/dynamic/\" (without quotes)",
-        default="/dynamic/utils/decompressmeshes.lua")
+        "The location of decompress_meshes.lua, including \"/dynamic/\" (without quotes)",
+        default="/dynamic/utils/mesh/decompress_meshes.lua")
 
     only_selected = BoolProperty(name="Only Export Selected Objects",
                                  description="Only export selected objects",
