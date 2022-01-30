@@ -62,23 +62,31 @@ class SegmentProperties(bpy.types.PropertyGroup):
         return graph
 
 
+def mark_dual_mesh_settings_change(self, context):
+    self.settings_changed = True
+
 class DualMeshProperties(bpy.types.PropertyGroup):
     is_dual_mesh = bpy.props.BoolProperty(default=False)
-    source = bpy.props.PointerProperty(type=bpy.types.Object)
-    use_color = bpy.props.BoolProperty(default=True)
-    exclude_seamed_edges = bpy.props.BoolProperty(default=False)
-    use_segments = bpy.props.BoolProperty(default=True)
-    apply_modifiers = bpy.props.BoolProperty(default=False)
-    cylinder_resolution = bpy.props.IntProperty(min=3, default=16)
-    cylinder_radius = bpy.props.FloatProperty(default=1.0)
-    shade_smooth = bpy.props.EnumProperty(items=[
-        ("OFF", "Off", "", 1),
-        ("WITHSHARPMITERS", "With sharp miters (recommended)", "", 2),
-        ("FULL", "Fully shade smooth", "", 3)
-    ],
-                                          default="WITHSHARPMITERS")
-
-    has_target = bpy.props.BoolProperty(default=False)
+    settings_changed = bpy.props.BoolProperty(default=True)
+    source = bpy.props.PointerProperty(type=bpy.types.Object, update=mark_dual_mesh_settings_change)
+    use_color = bpy.props.BoolProperty(default=True,
+                                       update=mark_dual_mesh_settings_change)
+    exclude_seamed_edges = bpy.props.BoolProperty(
+        default=False, update=mark_dual_mesh_settings_change)
+    use_segments = bpy.props.BoolProperty(
+        default=True, update=mark_dual_mesh_settings_change)
+    apply_modifiers = bpy.props.BoolProperty(
+        default=False, update=mark_dual_mesh_settings_change)
+    cylinder_resolution = bpy.props.IntProperty(
+        min=3, default=16, update=mark_dual_mesh_settings_change)
+    cylinder_radius = bpy.props.FloatProperty(
+        default=1.0, update=mark_dual_mesh_settings_change)
+    shade_smooth = bpy.props.EnumProperty(
+        items=[("OFF", "Off", "", 1),
+               ("WITHSHARPMITERS", "With sharp miters (recommended)", "", 2),
+               ("FULL", "Fully shade smooth", "", 3)],
+        default="WITHSHARPMITERS",
+        update=mark_dual_mesh_settings_change)
 
 
 class PewPewObjectProperties(bpy.types.PropertyGroup):
@@ -97,29 +105,26 @@ def getMeshHash(self):
 
     if bm.loops.layers.color.active:
         return str(
-            hash(
-                frozenset((frozenset(
-                    (tuple(vert.co),
-                     vert.link_loops[0][bm.loops.layers.color.active])
-                    for vert in face.verts),
-                           frozenset(
-                               frozenset([(tuple(edge.verts[0].co),
-                                           edge.verts[0].link_loops[0][
-                                               bm.loops.layers.color.active]),
-                                          (tuple(edge.verts[1].co),
-                                           edge.verts[1].link_loops[0][
-                                               bm.loops.layers.color.active])])
-                               for edge in face.edges)) for face in bm.faces)))
+            hash((frozenset(tuple(vert.co) for vert in bm.verts),
+                  frozenset((frozenset((
+                      (tuple(edge.verts[0].co),
+                       tuple(edge.verts[0].co.link_loops[0][bm.loops.layers.
+                                                            color.active])
+                       if len(edge.verts[0].co.link_loops) > 0 else None),
+                      (tuple(edge.verts[1].co),
+                       tuple(edge.verts[1].co.link_loops[0][bm.loops.layers.
+                                                            color.active])
+                       if len(edge.verts[1].co.link_loops) > 0 else None))),
+                             edge.seam) for edge in bm.edges))))
     else:
         return str(
-            hash(
-                frozenset((
-                    frozenset(tuple(vert.co) for vert in face.verts),
-                    frozenset(
-                        frozenset(
-                            [tuple(edge.verts[0].co),
-                             tuple(edge.verts[1].co)]) for edge in face.edges))
-                          for face in bm.faces)))
+            hash((
+                frozenset(tuple(vert.co) for vert in bm.verts),
+                frozenset((frozenset((tuple(edge.verts[0].co),
+                                      tuple(edge.verts[1].co))), edge.seam)
+                          for edge in bm.edges)
+                #frozenset((segment.segment_name, ) for segment in )
+            )))
 
 
 class PewPewMeshProperties(bpy.types.PropertyGroup):

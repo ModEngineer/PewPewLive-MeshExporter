@@ -1,13 +1,11 @@
 import bpy, bmesh, itertools, mathutils
 from ..modules import pygraphutils
 from ..exporters.exportmesh import correctIndex
-from math import pi, sqrt
-
+from math import pi
 
 @bpy.app.handlers.persistent
 def update_dual_meshes(scene):
     if scene.pewpew.is_updating_dual_meshes:
-        scene.pewpew.is_updating_dual_meshes = False
         return
     scene.pewpew.is_updating_dual_meshes = True
 
@@ -17,10 +15,6 @@ def update_dual_meshes(scene):
         for x in range(steps):
             yield initialvec.copy()
             initialvec.rotate(rotationmatrix)
-
-    def distance(vec1, vec2):
-        diff = vec2 - vec1
-        return sqrt(sum(diff * diff))
 
     def object_is_visible(obj, context):
         if bpy.app.version > (2, 79, 0):
@@ -47,7 +41,7 @@ def update_dual_meshes(scene):
                                   "RENDER")
         mesh.transform(mathutils.Matrix.Diagonal(source.scale).to_4x4())
         current_hash = mesh.pewpew.hash  # Not using := here because it'd break 2.79 compatibility
-        if current_hash == source.pewpew.last_hash:
+        if current_hash == source.pewpew.last_hash and not obj.pewpew.dual_mesh.settings_changed:
             continue
         else:
             source.pewpew.last_hash = current_hash
@@ -141,8 +135,11 @@ def update_dual_meshes(scene):
                             point += bm.verts[fleuryResult[index + 1]].co
                             planenormaltimeslinepoint = sum(planenormal *
                                                             point)
-                            t = (planenormaltimesplanepoint -
-                                 planenormaltimeslinepoint) / tmultiplier
+                            if tmultiplier==0: # This prevents division by zero but creates visual artifacts if triggered. Without this, division by zero causes the callback to stop functioning altogether (possible removal from callback list?).
+                                t=0
+                            else:
+                                t = (planenormaltimesplanepoint -
+                                    planenormaltimeslinepoint) / tmultiplier
                             pointlist.append(point + t * c1vec)
                         pointlistlist.append(pointlist)
                     if not islooped:
@@ -273,6 +270,9 @@ def update_dual_meshes(scene):
         newbm.to_mesh(obj.data)
         bm.free()
         newbm.free()
+        obj.pewpew.dual_mesh.settings_changed = False
+
+    scene.pewpew.is_updating_dual_meshes = False
 
 
 class CreateWireframeOperator(bpy.types.Operator):
@@ -304,10 +304,8 @@ class CreateWireframeOperator(bpy.types.Operator):
         ob = bpy.data.objects.new(context.object.name + "-pewpew-wireframe",
                                   me)
 
-        context.object.pewpew.dual_mesh.has_target = True
         ob.pewpew.dual_mesh.is_dual_mesh = True
         ob.pewpew.dual_mesh.source = context.object
-
         ob.pewpew.dual_mesh.use_color = self.use_color
         ob.pewpew.dual_mesh.exclude_seamed_edges = self.exclude_seamed_edges
         ob.pewpew.dual_mesh.use_segments = self.use_segments
@@ -326,6 +324,7 @@ class CreateWireframeOperator(bpy.types.Operator):
             bpy.context.collection.objects.link(ob)
         else:
             bpy.context.scene.objects.link(ob)
+        update_dual_meshes(context.scene)
         return {"FINISHED"}
 
     def invoke(self, context, event):

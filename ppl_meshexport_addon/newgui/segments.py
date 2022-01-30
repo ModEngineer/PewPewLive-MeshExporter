@@ -1,5 +1,6 @@
 import bpy, re
 from ..modules import pygraphutils
+from .dualmesh import update_dual_meshes
 
 
 def preventDuplicateSegmentName(self, context):
@@ -110,6 +111,8 @@ class SegmentDeleteOperator(bpy.types.Operator):
                 context.object.pewpew.active_segment_index)
             context.object.pewpew.active_segment_index -= 1
 
+        context.object.pewpew.last_hash = "None" # Set the last hash to an impossible value to force a reevaluation of any potential dual meshes
+        update_dual_meshes(context.scene)
         return {"FINISHED"}
 
 
@@ -226,6 +229,9 @@ class SegmentAssignOperator(bpy.types.Operator):
         if graphValidationResult.code != -0x5 and type(
                 graphValidationResult.exception) is not IndexError:
             graphValidationResult.raise_exception()
+
+        context.object.pewpew.last_hash = "None" # Set the last hash to an impossible value to force a reevaluation of any potential dual meshes
+        update_dual_meshes(context.scene)
         return {"FINISHED"}
 
 
@@ -274,6 +280,9 @@ class SegmentRemoveOperator(bpy.types.Operator):
         if graphValidationResult.code != -0x5 and type(
                 graphValidationResult.exception) is not IndexError:
             graphValidationResult.raise_exception()
+
+        context.object.pewpew.last_hash = "None" # Set the last hash to an impossible value to force a reevaluation of any potential dual meshes
+        update_dual_meshes(context.scene)
         return {"FINISHED"}
 
 
