@@ -125,7 +125,6 @@ def getMeshHash(self):
                 frozenset((frozenset((tuple(edge.verts[0].co),
                                       tuple(edge.verts[1].co))), edge.seam)
                           for edge in bm.edges)
-                #frozenset((segment.segment_name, ) for segment in )
             )))
 
 
