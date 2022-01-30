@@ -22,6 +22,7 @@ class GraphError(Exception):
 
 class Auto:
     """NoneType-like object that represents the automatic value"""
+
     def __repr__(self):
         return "Auto"
 
@@ -31,6 +32,7 @@ class Auto:
 
 class ExitContainer():
     """Error container class that can be used to raise the error or to get an exit code. 0 is a generic, non-error code, negative codes should represent errors, and positive codes should represent non-error program states."""
+
     class ExitContainerWarning(Warning):
         pass
 

@@ -3,6 +3,7 @@ from ..modules import pygraphutils
 from ..exporters.exportmesh import correctIndex
 from math import pi
 
+
 @bpy.app.handlers.persistent
 def update_dual_meshes(scene):
     if scene.pewpew.is_updating_dual_meshes:
@@ -135,11 +136,11 @@ def update_dual_meshes(scene):
                             point += bm.verts[fleuryResult[index + 1]].co
                             planenormaltimeslinepoint = sum(planenormal *
                                                             point)
-                            if tmultiplier==0: # This prevents division by zero but creates visual artifacts if triggered. Without this, division by zero causes the callback to stop functioning altogether (possible removal from callback list?).
-                                t=0
+                            if tmultiplier == 0:  # This prevents division by zero but creates visual artifacts if triggered. Without this, division by zero causes the callback to stop functioning altogether (possible removal from callback list?).
+                                t = 0
                             else:
                                 t = (planenormaltimesplanepoint -
-                                    planenormaltimeslinepoint) / tmultiplier
+                                     planenormaltimeslinepoint) / tmultiplier
                             pointlist.append(point + t * c1vec)
                         pointlistlist.append(pointlist)
                     if not islooped:

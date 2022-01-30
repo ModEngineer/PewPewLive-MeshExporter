@@ -261,6 +261,7 @@ class ExportPPLMesh(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
         mesh_decompressor_location_row.enabled = self.compress_meshes
 
     def execute(self, context):
+
         def object_is_visible(obj, context):
             if bpy.app.version > (2, 79, 0):
                 return obj.visible_get()

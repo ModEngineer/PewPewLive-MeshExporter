@@ -43,6 +43,7 @@ def vGroupBaseNameGetter(
 
 
 class MESH_UL_segments(bpy.types.UIList):
+
     def draw_item(self, context, layout, data, item, icon, active_data,
                   active_propname):
         if not item.is_eulerian:
@@ -111,7 +112,7 @@ class SegmentDeleteOperator(bpy.types.Operator):
                 context.object.pewpew.active_segment_index)
             context.object.pewpew.active_segment_index -= 1
 
-        context.object.pewpew.last_hash = "None" # Set the last hash to an impossible value to force a reevaluation of any potential dual meshes
+        context.object.pewpew.last_hash = "None"  # Set the last hash to an impossible value to force a reevaluation of any potential dual meshes
         update_dual_meshes(context.scene)
         return {"FINISHED"}
 
@@ -230,7 +231,7 @@ class SegmentAssignOperator(bpy.types.Operator):
                 graphValidationResult.exception) is not IndexError:
             graphValidationResult.raise_exception()
 
-        context.object.pewpew.last_hash = "None" # Set the last hash to an impossible value to force a reevaluation of any potential dual meshes
+        context.object.pewpew.last_hash = "None"  # Set the last hash to an impossible value to force a reevaluation of any potential dual meshes
         update_dual_meshes(context.scene)
         return {"FINISHED"}
 
@@ -281,7 +282,7 @@ class SegmentRemoveOperator(bpy.types.Operator):
                 graphValidationResult.exception) is not IndexError:
             graphValidationResult.raise_exception()
 
-        context.object.pewpew.last_hash = "None" # Set the last hash to an impossible value to force a reevaluation of any potential dual meshes
+        context.object.pewpew.last_hash = "None"  # Set the last hash to an impossible value to force a reevaluation of any potential dual meshes
         update_dual_meshes(context.scene)
         return {"FINISHED"}
 

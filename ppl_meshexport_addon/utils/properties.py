@@ -65,10 +65,12 @@ class SegmentProperties(bpy.types.PropertyGroup):
 def mark_dual_mesh_settings_change(self, context):
     self.settings_changed = True
 
+
 class DualMeshProperties(bpy.types.PropertyGroup):
     is_dual_mesh = bpy.props.BoolProperty(default=False)
     settings_changed = bpy.props.BoolProperty(default=True)
-    source = bpy.props.PointerProperty(type=bpy.types.Object, update=mark_dual_mesh_settings_change)
+    source = bpy.props.PointerProperty(type=bpy.types.Object,
+                                       update=mark_dual_mesh_settings_change)
     use_color = bpy.props.BoolProperty(default=True,
                                        update=mark_dual_mesh_settings_change)
     exclude_seamed_edges = bpy.props.BoolProperty(

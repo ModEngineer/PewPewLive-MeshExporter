@@ -1,1 +1,1 @@
-yapf -ir .
+python -m yapf -ir .
