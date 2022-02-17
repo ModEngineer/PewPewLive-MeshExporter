@@ -4,6 +4,7 @@ from ..exporters.exportmesh import correctIndex
 from math import pi
 import traceback
 
+
 @bpy.app.handlers.persistent
 def update_dual_meshes(scene):
     if scene.pewpew.is_updating_dual_meshes:
@@ -39,8 +40,8 @@ def update_dual_meshes(scene):
                     mesh = source.to_mesh()
             else:
                 mesh = source.to_mesh(bpy.context.scene,
-                                    obj.pewpew.dual_mesh.apply_modifiers,
-                                    "RENDER")
+                                      obj.pewpew.dual_mesh.apply_modifiers,
+                                      "RENDER")
             mesh.transform(mathutils.Matrix.Diagonal(source.scale).to_4x4())
             current_hash = mesh.pewpew.hash  # Not using := here because it'd break 2.79 compatibility
             if current_hash == source.pewpew.last_hash and not obj.pewpew.dual_mesh.settings_changed:
@@ -59,7 +60,7 @@ def update_dual_meshes(scene):
                         if not (obj.pewpew.dual_mesh.exclude_seamed_edges
                                 and edge.seam)
                     ]))),
-                                    key=lambda v: v.index)
+                                      key=lambda v: v.index)
             excludedVertexIndices = [
                 vertex.index for vertex in bm.verts
                 if vertex not in includedVertices
@@ -81,10 +82,10 @@ def update_dual_meshes(scene):
                         ]
                         for edge in bm.edges:
                             if any(vGroupIndex in dict(edge.verts[0]
-                                                    [deformLayer]).keys()
-                                for vGroupIndex in dict(edge.verts[1]
-                                                        [deformLayer]).keys()
-                                if vGroupIndex in segmentVGroupIndices):
+                                                       [deformLayer]).keys()
+                                   for vGroupIndex in dict(
+                                       edge.verts[1][deformLayer]).keys()
+                                   if vGroupIndex in segmentVGroupIndices):
                                 assert not (
                                     obj.pewpew.dual_mesh.exclude_seamed_edges
                                     and edge.seam
@@ -92,9 +93,9 @@ def update_dual_meshes(scene):
                                 remainingEdges.remove(edge)
                                 pygraphutils.add_edge(
                                     correctIndex(excludedVertexIndices,
-                                                edge.verts[0].index),
+                                                 edge.verts[0].index),
                                     correctIndex(excludedVertexIndices,
-                                                edge.verts[1].index),
+                                                 edge.verts[1].index),
                                     currentSegmentGraph)
                         pygraphutils.validate_graph(
                             currentSegmentGraph).raise_exception()
@@ -108,14 +109,21 @@ def update_dual_meshes(scene):
                         for index in range(len(fleuryResult) - 2):
                             pointlist = []
                             c1vec = bm.verts[fleuryResult[
-                                index + 1]].co - bm.verts[fleuryResult[index]].co
+                                index +
+                                1]].co - bm.verts[fleuryResult[index]].co
                             c2vec = bm.verts[fleuryResult[
                                 index + 1]].co - bm.verts[fleuryResult[index +
-                                                                    2]].co
+                                                                       2]].co
                             if obj.pewpew.dual_mesh.use_color and bm.loops.layers.color.active:
-                                colorlist.append(
-                                    bm.verts[fleuryResult[index + 1]].link_loops[0]
-                                    [bm.loops.layers.color.active])
+                                if len(bm.verts[fleuryResult[
+                                        index + 1]].link_loops) == 0:
+                                    colorlist.append(
+                                        mathutils.Vector((1, 1, 1, 1)))
+                                else:
+                                    colorlist.append(
+                                        bm.verts[fleuryResult[index +
+                                                              1]].link_loops[0]
+                                        [bm.loops.layers.color.active])
                             pvec1 = c1vec.normalized() + c2vec.normalized()
                             pvec2 = c1vec.cross(c2vec)
                             planenormal = pvec1.cross(pvec2)
@@ -123,26 +131,29 @@ def update_dual_meshes(scene):
                                 pvec2 = c1vec.orthogonal()
                             if planenormal == mathutils.Vector((0, 0, 0)):
                                 planenormal = c1vec
-
                             orthovec = pvec2.normalized(
                             ) * obj.pewpew.dual_mesh.cylinder_radius
 
                             for circle_point in create_circle(
                                     orthovec.copy(), c1vec,
                                     obj.pewpew.dual_mesh.cylinder_resolution):
-                                circle_point += bm.verts[fleuryResult[index + 1]].co
-                                intersection_point = mathutils.geometry.intersect_line_plane(circle_point, circle_point + c1vec, bm.verts[fleuryResult[index + 1]].co, planenormal)
+                                circle_point += bm.verts[fleuryResult[index +
+                                                                      1]].co
+                                intersection_point = mathutils.geometry.intersect_line_plane(
+                                    circle_point, circle_point + c1vec,
+                                    bm.verts[fleuryResult[index + 1]].co,
+                                    planenormal)
                                 assert intersection_point != None, "Intersection point is None"
                                 pointlist.append(intersection_point)
                             pointlistlist.append(pointlist)
                         if not islooped:
-                            startCylinderVec = bm.verts[
-                                fleuryResult[0]].co - bm.verts[fleuryResult[1]].co
+                            startCylinderVec = bm.verts[fleuryResult[
+                                0]].co - bm.verts[fleuryResult[1]].co
                             pointlistlist.insert(0, [
                                 vec + bm.verts[fleuryResult[0]].co
                                 for vec in create_circle(
-                                    startCylinderVec.orthogonal().normalized() *
-                                    obj.pewpew.dual_mesh.cylinder_radius,
+                                    startCylinderVec.orthogonal().normalized()
+                                    * obj.pewpew.dual_mesh.cylinder_radius,
                                     startCylinderVec,
                                     obj.pewpew.dual_mesh.cylinder_resolution)
                             ])
@@ -175,8 +186,8 @@ def update_dual_meshes(scene):
                             edgelist = []
                             for index in range(-1, len(vertlist) - 1):
                                 edgelist.append(
-                                    newbm.edges.new(
-                                        (vertlist[index], vertlist[index + 1])))
+                                    newbm.edges.new((vertlist[index],
+                                                     vertlist[index + 1])))
                             edgelistlist.append(edgelist)
 
                         if obj.pewpew.dual_mesh.shade_smooth == "WITHSHARPMITERS":
@@ -185,26 +196,29 @@ def update_dual_meshes(scene):
 
                         if not islooped:
                             if obj.pewpew.dual_mesh.shade_smooth == "WITHSHARPMITERS":
-                                capfacelist.append(newbm.faces.new(
-                                    vertlistlist[0]))
+                                capfacelist.append(
+                                    newbm.faces.new(vertlistlist[0]))
                                 capfacelist.append(
                                     newbm.faces.new(vertlistlist[-1]))
                             else:
                                 newbm.faces.new(vertlistlist[0])
                                 newbm.faces.new(vertlistlist[-1])
 
-                        for index in range(-int(islooped), len(edgelistlist) - 1):
+                        for index in range(-int(islooped),
+                                           len(edgelistlist) - 1):
                             bmesh.ops.bridge_loops(newbm,
-                                                edges=edgelistlist[index] +
-                                                edgelistlist[index + 1])
+                                                   edges=edgelistlist[index] +
+                                                   edgelistlist[index + 1])
                         if obj.pewpew.dual_mesh.use_color and bm.loops.layers.color.active:
-                            for vertlist, color in zip(vertlistlist, colorlist):
+                            for vertlist, color in zip(vertlistlist,
+                                                       colorlist):
                                 print(color)
                                 for vert in vertlist:
                                     for loops in vert.link_loops:
                                         loops[colorloop] = color
             for edge in remainingEdges:
-                if not (obj.pewpew.dual_mesh.exclude_seamed_edges and edge.seam):
+                if not (obj.pewpew.dual_mesh.exclude_seamed_edges
+                        and edge.seam):
                     d1vec = edge.verts[0].co - edge.verts[1].co
                     d2vec = edge.verts[1].co - edge.verts[0].co
 
@@ -213,22 +227,26 @@ def update_dual_meshes(scene):
                             d1vec.orthogonal().normalized() *
                             obj.pewpew.dual_mesh.cylinder_radius, d1vec,
                             obj.pewpew.dual_mesh.cylinder_resolution):
-                        c1verts.append(newbm.verts.new(point + edge.verts[0].co))
+                        c1verts.append(
+                            newbm.verts.new(point + edge.verts[0].co))
                     c2verts = []
                     for point in create_circle(
                             d2vec.orthogonal().normalized() *
                             obj.pewpew.dual_mesh.cylinder_radius, d2vec,
                             obj.pewpew.dual_mesh.cylinder_resolution):
-                        c2verts.append(newbm.verts.new(point + edge.verts[1].co))
+                        c2verts.append(
+                            newbm.verts.new(point + edge.verts[1].co))
 
                     edgelist = []
                     for index in range(-1, len(c1verts) - 1):
                         edgelist.append(
-                            newbm.edges.new((c1verts[index], c1verts[index + 1])))
+                            newbm.edges.new(
+                                (c1verts[index], c1verts[index + 1])))
 
                     for index in range(-1, len(c2verts) - 1):
                         edgelist.append(
-                            newbm.edges.new((c2verts[index], c2verts[index + 1])))
+                            newbm.edges.new(
+                                (c2verts[index], c2verts[index + 1])))
 
                     if obj.pewpew.dual_mesh.shade_smooth == "WITHSHARPMITERS":
                         miteredgelist += edgelist
@@ -264,10 +282,7 @@ def update_dual_meshes(scene):
             bm.free()
             newbm.free()
             obj.pewpew.dual_mesh.settings_changed = False
-        except AssertionError as e:
-            print(traceback.format_exc())
-            continue
-        except pygraphutils.GraphError as e:
+        except Exception as e:  #Dirty way to print the error message without having the blender deregister the function.
             print(traceback.format_exc())
             continue
 
