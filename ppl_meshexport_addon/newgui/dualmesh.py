@@ -127,9 +127,9 @@ def update_dual_meshes(scene):
                             pvec1 = c1vec.normalized() + c2vec.normalized()
                             pvec2 = c1vec.cross(c2vec)
                             planenormal = pvec1.cross(pvec2)
-                            if pvec2 == mathutils.Vector((0, 0, 0)):
+                            if pvec2.length <= 0.0001:
                                 pvec2 = c1vec.orthogonal()
-                            if planenormal == mathutils.Vector((0, 0, 0)):
+                            if planenormal.length <= 0.0001:
                                 planenormal = c1vec
                             orthovec = pvec2.normalized(
                             ) * obj.pewpew.dual_mesh.cylinder_radius
