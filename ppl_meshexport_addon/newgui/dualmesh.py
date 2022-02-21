@@ -212,7 +212,6 @@ def update_dual_meshes(scene):
                         if obj.pewpew.dual_mesh.use_color and bm.loops.layers.color.active:
                             for vertlist, color in zip(vertlistlist,
                                                        colorlist):
-                                print(color)
                                 for vert in vertlist:
                                     for loops in vert.link_loops:
                                         loops[colorloop] = color
