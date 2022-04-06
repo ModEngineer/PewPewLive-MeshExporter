@@ -9,8 +9,8 @@ A [Blender](https://www.blender.org/) 2.79+ add-on for converting scenes into [P
 5. Select the .zip you downloaded and click "Install Add-on"
 6. Tick the checkbox next to "Import-Export: PewPew Live Mesh Exporter." If you are using a Blender version below 2.90, you may get a warning about the add-on being for a future version. While the current version of Blender will always be the priority, I will try to maintain backwards compatibility through one way or another.
 
-### What is `decompresscolors.lua`?
-This add-on losslessly compresses colors it exports, which need to be decompressed. `decompresscolors.lua` is the script used to decompress the exported colors and must be included with your PewPew Live level. It can be found [here](https://github.com/ModEngineer/PewPewLive-Code-Snippets/blob/main/mesh_utils/decompresscolors.lua).
+### What is `decompress_meshes.lua`?
+This add-on compresses meshes that it exports, which need to be decompressed. `decompress_meshes.lua` is the script used to decompress the exported meshes and must be included in your PewPew Live level. It can be found [here](https://github.com/ModEngineer/PewPewLive-Code-Snippets/blob/main/utils/mesh/decompress_meshes.lua).
 
 ### What are segments?
 Segments are PewPew Live's version of edges. By default, each edge is exported to its own segment, but the segments panel (which should be near the vertex groups panel) can be used to merge multiple edges into a single segment.
