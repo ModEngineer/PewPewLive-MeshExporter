@@ -46,9 +46,8 @@ jobs:
               let splitTag = tagName.split("-r")
               tagName = splitTag[0] + "-r" + (parseInt(splitTag[1])+1).toString()
             }
-            let latestReleaseHash = releaseListResponse[0].target_commitish
-            if (latest_hash.match(/[0-9a-f]{64}/i)) {
-              const hashes = child_process.execSync(`git log ...${latestReleaseHash} --pretty='format:%H'`, {cwd: process.env.GITHUB_WORKSPACE}).split('\n')
+            if (releaseListResponse[0].target_commitish.match(/[0-9a-f]{64}/i)) {
+              const hashes = child_process.execSync(`git log ...${releaseListResponse[0].target_commitish} --pretty='format:%H'`, {cwd: process.env.GITHUB_WORKSPACE}).split('\n')
               if (hashes.length > 0) {
                 textBody += " Commit messages and descriptions since the last release are shown below:"
                 for (const hash in hashes) {
@@ -59,14 +58,14 @@ jobs:
                   }
                 }
               }
-            })
+            }
             
             let commitishHash = await github.repos.listCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,
               path: "ppl_meshexport_addon/",
               per_page: 1
-            })
+            }).data[0].sha
 
             let releaseResponse = await github.repos.createRelease({
               owner: context.repo.owner,
