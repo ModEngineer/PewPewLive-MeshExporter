@@ -1,0 +1,3 @@
+[submodule "ppl_meshexport_addon/modules/pygraphutils"]
+	path = ppl_meshexport_addon/modules/pygraphutils
+	url = https://github.com/modengineer/pygraphutils.git
