@@ -54,7 +54,7 @@ jobs:
                 textBody += " Commit messages and descriptions since the last release are shown below:"
                 for (const hash of hashes) {
                   textBody += '\n- ' + child_process.execSync(`git log --pretty='format:%s' -n 1 ${hash}`, {cwd: process.env.GITHUB_WORKSPACE}).toString()
-                  let commitBodyLines = child_process.execSync(`git log --pretty='format:%b' -n 1 ${hash}`, {cwd: process.env.GITHUB_WORKSPACE}).toString()
+                  let commitBodyLines = child_process.execSync(`git log --pretty='format:%b' -n 1 ${hash}`, {cwd: process.env.GITHUB_WORKSPACE}).toString().split('\n')
                   for (const line of commitBodyLines) {
                     textBody += '\n  ' + line
                   }
