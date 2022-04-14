@@ -73,7 +73,7 @@ jobs:
               tag_name: tagName,
               name: tagName,
               body: textBody,
-              target_commitish: commitHash
+              target_commitish: commitishHash
             })
 
             await github.repos.uploadReleaseAsset({
