@@ -46,7 +46,7 @@ jobs:
               let splitTag = tagName.split("-r")
               tagName = splitTag[0] + "-r" + (parseInt(splitTag[1])+1).toString()
             }
-            if (releaseListResponse.data[0].target_commitish.match(/[0-9a-f]{64}/i)) {
+            if (releaseListResponse.data[0].target_commitish.match(/[0-9a-f]{40}/i)) {
               const hashes = child_process.execSync(`git log ...${releaseListResponse.data[0].target_commitish} --pretty='format:%H'`, {cwd: process.env.GITHUB_WORKSPACE}).split('\n')
               if (hashes.length > 0) {
                 textBody += " Commit messages and descriptions since the last release are shown below:"
