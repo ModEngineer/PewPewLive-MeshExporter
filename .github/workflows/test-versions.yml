@@ -60,8 +60,9 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v2
-        submodules: 'recursive'
+      - uses: actions/checkout@v2.3
+        with:
+          submodules: 'recursive'
       - name: Set up Python
         uses: actions/setup-python@v2.2.2
         with:
