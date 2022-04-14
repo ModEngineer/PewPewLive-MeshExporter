@@ -60,12 +60,12 @@ jobs:
               }
             }
             
-            let commitishHash = await github.repos.listCommits({
+            let commitishHash = (await github.repos.listCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,
               path: "ppl_meshexport_addon/",
               per_page: 1
-            }).data[0].sha
+            })).data[0].sha
 
             let releaseResponse = await github.repos.createRelease({
               owner: context.repo.owner,
