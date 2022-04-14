@@ -32,6 +32,7 @@ jobs:
           script: |
             const fs = require('fs')
             const path = require('path')
+            const child_process = require('child_process')
             const path_to_release_data = path.join(process.env.GITHUB_WORKSPACE, ".github", "workflows", "create_release")
             let version = fs.readFileSync(path.join(path_to_release_data, "version.txt"), "utf8")
             let textBody = 'Automated release of the PewPew Live Mesh Exporter Add-on.' //Test results can most likely be viewed at the comments section of the commit of this release. Test results for the latest release can be found in the repository\'s README.md'
@@ -45,13 +46,28 @@ jobs:
               let splitTag = tagName.split("-r")
               tagName = splitTag[0] + "-r" + (parseInt(splitTag[1])+1).toString()
             }
-            let commitHash = await github.repos.listCommits({
+            let latestReleaseHash = releaseListResponse[0].target_commitish
+            if (latest_hash.match(/[0-9a-f]{64}/i)) {
+              const hashes = child_process.execSync(`git log ...${latestReleaseHash} --pretty='format:%H'`, {cwd: process.env.GITHUB_WORKSPACE}).split('\n')
+              if (hashes.length > 0) {
+                textBody += " Commit messages and descriptions since the last release are shown below:"
+                for (const hash in hashes) {
+                  textBody += '\n- ' + child_process.execSync(`git log --pretty='format:%s' -n 1 ${hash}`
+                  let commitBodyLines = child_process.execSync(`git log --pretty='format:%b' -n 1 ${hash}`)
+                  for (const line in commitBodyLines) {
+                    textBody += '\n  ' + line
+                  }
+                }
+              }
+            })
+            
+            let commitishHash = await github.repos.listCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,
               path: "ppl_meshexport_addon/",
               per_page: 1
             })
-            commitHash = commitHash.data[0].sha
+
             let releaseResponse = await github.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -60,6 +76,7 @@ jobs:
               body: textBody,
               target_commitish: commitHash
             })
+            
             await github.repos.uploadReleaseAsset({
               owner: context.repo.owner,
               repo: context.repo.repo,
