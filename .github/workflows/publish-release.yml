@@ -47,12 +47,12 @@ jobs:
               tagName = splitTag[0] + "-r" + (parseInt(splitTag[1])+1).toString()
             }
             if (releaseListResponse.data[0].target_commitish.match(/[0-9a-f]{40}/i)) {
-              const hashes = child_process.execSync(`git log ...${releaseListResponse.data[0].target_commitish} --pretty='format:%H'`, {cwd: process.env.GITHUB_WORKSPACE}).split('\n')
+              const hashes = child_process.execSync(`git log --pretty='format:%H' ...${releaseListResponse.data[0].target_commitish}`, {cwd: process.env.GITHUB_WORKSPACE}).toString().split('\n')
               if (hashes.length > 0) {
                 textBody += " Commit messages and descriptions since the last release are shown below:"
                 for (const hash in hashes) {
-                  textBody += '\n- ' + child_process.execSync(`git log --pretty='format:%s' -n 1 ${hash}`, {cwd: process.env.GITHUB_WORKSPACE})
-                  let commitBodyLines = child_process.execSync(`git log --pretty='format:%b' -n 1 ${hash}`, {cwd: process.env.GITHUB_WORKSPACE})
+                  textBody += '\n- ' + child_process.execSync(`git log --pretty='format:%s' -n 1 ${hash}`, {cwd: process.env.GITHUB_WORKSPACE}).toString()
+                  let commitBodyLines = child_process.execSync(`git log --pretty='format:%b' -n 1 ${hash}`, {cwd: process.env.GITHUB_WORKSPACE}).toString()
                   for (const line in commitBodyLines) {
                     textBody += '\n  ' + line
                   }
