@@ -5,7 +5,7 @@ bl_info = {
     "description": "A mesh exporter for PewPew Live",
     "version": (0, 5, 6),
     "tracker_url":
-    "https://www.github.com/ModEngineer/PewPewLive-MeshExporter/issues",
+    "https://github.com/ModEngineer/PewPewLive-MeshExporter/issues",
     "category": "Import-Export"
 }  #bl_info MUST be the first thing in the file. AST is used to parse this and get the version when publishing a release.
 
