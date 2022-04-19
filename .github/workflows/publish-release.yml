@@ -49,7 +49,6 @@ jobs:
             }
             if (releaseListResponse.data[0].target_commitish.match(/[0-9a-f]{40}/i)) {
               const hashes = child_process.execSync(`git log --pretty='format:%H' ...${releaseListResponse.data[0].target_commitish}`, {cwd: process.env.GITHUB_WORKSPACE}).toString().split('\n')
-              console.log(hashes)
               if (hashes != [""]) {
                 textBody += " Commit messages and descriptions since the last release are shown below:"
                 for (const hash of hashes) {
