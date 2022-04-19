@@ -58,18 +58,21 @@ def serializeMesh(context, obj, use_local, export_color, exclude_seamed_edges,
             out[stringKey("vertexes")][-1].append(z)
         if export_color and bm.loops.layers.color.active:
             #Face vertices are ignored. I don't have the time to support multiple colors per vertex.
-            vertexcolor = vertex.link_loops[0][bm.loops.layers.color.active]
-            if bpy.app.version > (2, 79, 0):
-                colorhex = hexint(
-                    (clamp(round(vertexcolor[0] * 255), 0, 255) << 24) +
-                    (clamp(round(vertexcolor[1] * 255), 0, 255) << 16) +
-                    (clamp(round(vertexcolor[2] * 255), 0, 255) << 8) +
-                    clamp(round(vertexcolor[3] * 255), 0, 255))
+            if vertex.link_loops:
+                vertexcolor = vertex.link_loops[0][bm.loops.layers.color.active]
+                if bpy.app.version > (2, 79, 0):
+                    colorhex = hexint(
+                        (clamp(round(vertexcolor[0] * 255), 0, 255) << 24) +
+                        (clamp(round(vertexcolor[1] * 255), 0, 255) << 16) +
+                        (clamp(round(vertexcolor[2] * 255), 0, 255) << 8) +
+                        clamp(round(vertexcolor[3] * 255), 0, 255))
+                else:
+                    colorhex = hexint(
+                        (clamp(round(vertexcolor[0] * 255), 0, 255) << 24) +
+                        (clamp(round(vertexcolor[1] * 255), 0, 255) << 16) +
+                        (clamp(round(vertexcolor[2] * 255), 0, 255) << 8) + 0xff)
             else:
-                colorhex = hexint(
-                    (clamp(round(vertexcolor[0] * 255), 0, 255) << 24) +
-                    (clamp(round(vertexcolor[1] * 255), 0, 255) << 16) +
-                    (clamp(round(vertexcolor[2] * 255), 0, 255) << 8) + 0xff)
+                colorhex = hexint(0xffffffff)
             if compress:
                 out[stringKey("colors")][str(
                     colorhex)] = out[stringKey("colors")].get(
