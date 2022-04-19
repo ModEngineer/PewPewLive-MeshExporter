@@ -112,11 +112,11 @@ def getMeshHash(self):
                       (tuple(edge.verts[0].co),
                        tuple(edge.verts[0].link_loops[0][bm.loops.layers.
                                                             color.active])
-                       if len(edge.verts[0].link_loops) > 0 else None),
+                       if edge.verts[0].link_loops else None),
                       (tuple(edge.verts[1].co),
                        tuple(edge.verts[1].link_loops[0][bm.loops.layers.
                                                             color.active])
-                       if len(edge.verts[1].link_loops) > 0 else None))),
+                       if edge.verts[1].link_loops else None))),
                              edge.seam) for edge in bm.edges))))
     else:
         return str(
