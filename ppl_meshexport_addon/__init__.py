@@ -3,7 +3,7 @@ bl_info = {
     "author": "ModEngineer",
     "blender": (2, 80, 0),
     "description": "A mesh exporter for PewPew Live",
-    "version": (0, 5, 7),
+    "version": (0, 6, 0),
     "tracker_url":
     "https://github.com/ModEngineer/PewPewLive-MeshExporter/issues",
     "category": "Import-Export"

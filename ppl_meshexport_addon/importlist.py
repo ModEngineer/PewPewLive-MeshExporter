@@ -2,6 +2,7 @@
 from .utils import properties
 from .newgui import vertexcolorimprovement, segments, dualmesh
 from .exporters import exportmesh
+from .importers import importmesh
 
 importorder = [
     properties.PewPewSceneProperties,
@@ -30,4 +31,6 @@ importorder = [
     vertexcolorimprovement.VertexColorOperator,
     exportmesh.ExportPPLMesh,
     (exportmesh.register, exportmesh.unregister),
+    importmesh.ImportPPLMeshFromJSON,
+    (importmesh.register, importmesh.unregister),
 ]
