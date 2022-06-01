@@ -64,9 +64,11 @@ class ImportPPLMeshFromJSON(bpy.types.Operator,
                 if len(segment) > 2:
                     obj.pewpew.segments.add()
                     obj.pewpew.segments[-1].segment_name = "Segment"
+                    obj.pewpew.segments[-1].is_eulerian = True
                     for i in range(len(segment)-1):
                         group = obj.vertex_groups.new(name=obj.pewpew.segments[-1].vgroup_base_name)
                         bm.verts[segment[i]][deform_layer][group.index] = 1.0
+                        bm.verts[segment[i+1]][deform_layer][group.index] = 1.0
             bm.edges.index_update()
             bm.edges.ensure_lookup_table()
             for edge in bm.edges:
