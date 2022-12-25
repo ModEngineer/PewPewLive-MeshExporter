@@ -89,6 +89,7 @@ class DualMeshProperties(bpy.types.PropertyGroup):
                ("FULL", "Fully shade smooth", "", 3)],
         default="WITHSHARPMITERS",
         update=mark_dual_mesh_settings_change)
+    update_after_all_edits = bpy.props.BoolProperty(default=True, update=mark_dual_mesh_settings_change)
 
 
 class PewPewObjectProperties(bpy.types.PropertyGroup):
@@ -106,7 +107,7 @@ def getMeshHash(self):
     bm.faces.ensure_lookup_table()
 
     if bm.loops.layers.color.active:
-        return str(
+        return_value = str(
             hash((frozenset(tuple(vert.co) for vert in bm.verts),
                   frozenset((frozenset((
                       (tuple(edge.verts[0].co),
@@ -119,13 +120,15 @@ def getMeshHash(self):
                        if edge.verts[1].link_loops else None))),
                              edge.seam) for edge in bm.edges))))
     else:
-        return str(
+        return_value = str(
             hash((
                 frozenset(tuple(vert.co) for vert in bm.verts),
                 frozenset((frozenset((tuple(edge.verts[0].co),
                                       tuple(edge.verts[1].co))), edge.seam)
                           for edge in bm.edges)
             )))
+    bm.free()
+    return return_value
 
 
 class PewPewMeshProperties(bpy.types.PropertyGroup):

@@ -32,6 +32,10 @@ def update_dual_meshes(scene):
 
             source = obj.pewpew.dual_mesh.source
             newbm = bmesh.new()
+
+            if source.mode == "EDIT" and obj.pewpew.dual_mesh.update_after_all_edits:
+                source.update_from_editmode()
+
             if bpy.app.version > (2, 79, 0):
                 if obj.pewpew.dual_mesh.apply_modifiers:
                     mesh = source.evaluated_get(
@@ -408,6 +412,7 @@ class DATA_PT_pewpew_wireframe(bpy.types.Panel):
             layout.prop(context.object.pewpew.dual_mesh,
                         "shade_smooth",
                         text="Shade Smooth")
+            layout.prop(context.object.pewpew.dual_mesh, "update_after_all_edits", text="Update After All Edits")
             layout.operator("mesh.apply_pewpew_wireframe",
                             text="Apply PewPew Wireframe")
         else:
