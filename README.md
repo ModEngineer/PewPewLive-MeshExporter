@@ -1,5 +1,8 @@
 # \[WIP\]PewPewLive-MeshExporter
-A [Blender](https://www.blender.org/) 2.79+ add-on for converting scenes into [PewPew Live](https://pewpew.live/) 3D models
+A [Blender](https://www.blender.org/) 3.3+ add-on for converting scenes into [PewPew Live](https://pewpew.live/) 3D models
+
+### Using Blender 2.79-3.2?
+The last release that supports your Blender version is [v0.6.1-r2](https://github.com/ModEngineer/PewPewLive-MeshExporter/releases/tag/v0.6.1-r2). This version will not be maintained, and files saved with newer versions will be incompatible with this version.
 
 ### Installation Instructions:
 1. Download a [release](https://github.com/ModEngineer/PewPewLive-MeshExporter/releases)
@@ -21,25 +24,6 @@ These are used to keep track of edges. This is done because properties cannot be
 ### Found a bug?
 Open an [issue](https://github.com/ModEngineer/PewPewLive-MeshExporter/issues)
 
-### Test Results (no longer updated, writing tests for newer versions is becoming too complicated) <!-- The below "tablestart" and "tableend" comments must be kept in their current formats. They are used by Github Actions to automatically update the test results displayed here. -->
+<!--### Test Results (no longer updated, writing tests for newer versions is becoming too complicated)--> <!-- The below "tablestart" and "tableend" comments must be kept in their current formats. They are used by Github Actions to automatically update the test results displayed here. -->
 <!--tablestart-->
-| Test | 2.90 | 2.80 | 2.79 |
-| --- | --- | --- | --- |
-| Add-on registration | ✅ | ✅ | ✅ |
-| Vertex color operator | ✅ | ✅ | ✅ |
-| Object export with local coordinates, only selected objects | ✅ | ✅ | ✅ |
-| Object export without local coordinates, all objects | ✅ | ✅ | ✅ |
-| Add-on unregistration | ✅ | ✅ | ✅ |
-| Tests (this will show as an error if the test sotware had an error) | ✅ | ✅ | ✅ |
-
-Any errors produced during tests will be displayed below:
-Tracebacks for Blender version 2.90:
-```py
-```
-Tracebacks for Blender version 2.80:
-```py
-```
-Tracebacks for Blender version 2.79:
-```py
-```
 <!--tableend-->
